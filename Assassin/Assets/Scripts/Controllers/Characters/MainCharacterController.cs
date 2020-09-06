@@ -15,6 +15,8 @@ public class MainCharacterController : UnitController
     [SerializeField] bool isDashAttacking = false;
     [SerializeField] bool isDashFalling = false; //checker to see if unit is falling after a dash
 
+    [SerializeField] bool isPerformingMovementSkill = false;
+
     [SerializeField] bool isNormalAttacking = false;
     [SerializeField] int NormalAttackRotation = 1; // which normal attack the character is currently on
     [SerializeField] int NormalRangedAttackRotation = 1; // which normal ranged attack the character is currently on
@@ -27,6 +29,7 @@ public class MainCharacterController : UnitController
     [SerializeField] private GameObject LowerBody;
     [SerializeField] private GameObject FrontHand;
     [SerializeField] private GameObject BackHand;
+    [SerializeField] private GameObject FrontBlade;
 
     [SerializeField] private GroundColliderController GroundCollider;
     private MainCharacterUpperAnimationController UpperBodyAnimationStateController;
@@ -35,20 +38,29 @@ public class MainCharacterController : UnitController
     [SerializeField] private WeaponColliderController BackBladeCollider;
     private MainCharacterStats MainStatController;
 
+    Vector3 RoBLocation;
+
     #region skill prefabs
     GameObject currentProjectilePrefab;
     private GameObject BladeProjectilePrefab;
     private GameObject RazorBladePrefab;
-
+    private GameObject CullEffectPrefab;
+    private GameObject RainOfBladesPrefab;
+    private GameObject BladeStormPrefab;
     #endregion
 
+    #region BladeStorm autocast info
+    int AutoCastChance = 0;
+    TempPlayerSkill BladestormInstance;
+    #endregion
 
 
     UIController uicontroller;
     #region player skills
     protected Dictionary<Skill, TempPlayerSkill> Skills = new Dictionary<Skill, TempPlayerSkill>(); //skill list for players. key: skill, value: skill containing the upgrades
     protected TempPlayerSkill currentUpgradedSkill = new TempPlayerSkill(PlayerSkill.Default);
-    
+    List<Skill> SlottedSkills = new List<Skill>();
+
     #endregion
     // Start is called before the first frame update
     protected override void Start()
@@ -56,50 +68,73 @@ public class MainCharacterController : UnitController
         base.Start();
         uicontroller = GameObject.Find("WorldUI").GetComponent<UIController>();
         MainStatController = GetComponent<MainCharacterStats>();
+        MainStatController.onHealthLost.AddListener(OnHealthLost);
         unitType = UnitType.Ally;
-        walkSpeed = 12;
+       BasewalkSpeed=  walkSpeed = 8;
         dashSpeed = 25;
         JumpForce = 1000;
         xScale = 0.5f;
 
-        SkillPool.Add(Skill.PlayerRazorBlades);
-   
+        //LearnSkill(Skill.PlayerNormalAttack);
+        //LearnSkill(Skill.PlayerNormalRangedAttack);
+        //LearnSkill(Skill.PlayerRazorBlades);
+        //LearnSkill(Skill.PlayerPuncture);
+        //LearnSkill(Skill.PlayerSlash);
+        //LearnSkill(Skill.PlayerCull);
 
-
-        Skills.Add(Skill.PlayerNormalAttack, new TempPlayerSkill(PlayerSkill.PlayerNormalAttack));
-        Skills.Add(Skill.PlayerNormalRangedAttack, new TempPlayerSkill(PlayerSkill.PlayerNormalRangedAttack));
-        Skills.Add(Skill.PlayerRazorBlades, new TempPlayerSkill(PlayerSkill.PlayerRazorBlades));
-
-
+        //SlottedSkills[0] = Skill.PlayerRazorBlades;
+        //SlottedSkills[1] = Skill.PlayerSlash;
+        //SlottedSkills[2] = Skill.PlayerPuncture;
+        //SlottedSkills[3] = Skill.PlayerCull;
 
         //below are manually acquired upgrades
-      //  UpgradeSkill(Skill.PlayerNormalAttack, SkillUpgrade.NormalAttackHeal);
-      //  UpgradeSkill(Skill.PlayerNormalAttack, SkillUpgrade.NormalAttackBleed);
+        //  UpgradeSkill(Skill.PlayerNormalAttack, SkillUpgrade.NormalAttackHeal);
+        //  UpgradeSkill(Skill.PlayerNormalAttack, SkillUpgrade.NormalAttackBleed);
         //UpgradeSkill(Skill.PlayerNormalRangedAttack, SkillUpgrade.NormalRangedAttackAdditionalProjectiles);
         //UpgradeSkill(Skill.PlayerNormalRangedAttack, SkillUpgrade.NormalRangedAttackPierce);
-       //  UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeBleed);
-      //  UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeHeal);
+        // UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeBleed);
+        //  UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeHeal);
         //  UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladesCooldown);
         // UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladesCooldown);
-       // UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeAdditionalProjectiles);
-      //  UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeAdditionalProjectiles);
+        //UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladesCooldown);
+        //UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladesCooldown);
+        //UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeAdditionalProjectiles);
+        //UpgradeSkill(Skill.PlayerRazorBlades, SkillUpgrade.RazorBladeAdditionalProjectiles);
+        //  UpgradeSkill(Skill.PlayerSlash, SkillUpgrade.SlashCooldownOnHit);
+        //   UpgradeSkill(Skill.PlayerSlash, SkillUpgrade.SlashDistance);
+        // UpgradeSkill(Skill.PlayerSlash, SkillUpgrade.SlashGainArmor);
+        // UpgradeSkill(Skill.PlayerCull, SkillUpgrade.CullArmorOnKill);
+        //  UpgradeSkill(Skill.PlayerCull, SkillUpgrade.CullSize);
+        // UpgradeSkill(Skill.PlayerCull, SkillUpgrade.CullSize);
 
-        uicontroller.InitIcon(1, Icon.RazorBlades.IconName, Skills[Skill.PlayerRazorBlades].EnergyCost, (int)Skills[Skill.PlayerRazorBlades].Cooldown);
-        for (int i = 0; i < SkillPool.Count; i++)
-        {
-            SkillCooldowns.Add(0);
-        }
+        //uicontroller.InitIcon(1, Icon.RazorBlades.IconName, Skills[Skill.PlayerRazorBlades].EnergyCost, (int)Skills[Skill.PlayerRazorBlades].Cooldown);
+        //uicontroller.InitIcon(2, Icon.Slash.IconName, Skills[Skill.PlayerSlash].EnergyCost, (int)Skills[Skill.PlayerSlash].Cooldown);
+        //uicontroller.InitIcon(3, Icon.Puncture.IconName, Skills[Skill.PlayerPuncture].EnergyCost, (int)Skills[Skill.PlayerPuncture].Cooldown);
+        //uicontroller.InitIcon(4, Icon.Cull.IconName, Skills[Skill.PlayerCull].EnergyCost, (int)Skills[Skill.PlayerCull].Cooldown);
+
+
+
+        //for (int i = 0; i < SkillPool.Count; i++)
+        //{
+        //    SkillCooldowns.Add(0);
+        //}
 
         UpperBodyAnimationStateController = UpperBody.GetComponent<MainCharacterUpperAnimationController>();
         UpperBodyAnimationStateController.onActionFinish.AddListener(FinishAction);
         UpperBodyAnimationStateController.onNACollisionStart.AddListener(TurnNAWeaponDetectionOn);
         UpperBodyAnimationStateController.onNAFinish.AddListener(finishNA);
-        UpperBodyAnimationStateController.onAttackFinish.AddListener(stopAttacking);
+        UpperBodyAnimationStateController.onAttackFinish.AddListener(StopAttacking);
         UpperBodyAnimationStateController.onRangedNAThrow.AddListener(NormalRangedAttackThrow);
         UpperBodyAnimationStateController.onRangedNAFinish.AddListener(finishRangedNA);
         UpperBodyAnimationStateController.onDefaultRangedFinish.AddListener(FinishDefaultRangedAttack);
+        UpperBodyAnimationStateController.onDefaultSpellUse.AddListener(DefaultSpellCast);
         UpperBodyAnimationStateController.onDefaultRangedThrow.AddListener(DefaultRangedThrow);
-
+        UpperBodyAnimationStateController.WeaponDetectionOnFront.AddListener(TurnDetectionOnFrontBlade);
+        UpperBodyAnimationStateController.WeaponDetectionOnBack.AddListener(TurnDetectionOnBackBlade);
+        UpperBodyAnimationStateController.WeaponDetectionOffFront.AddListener(TurnDetectionOffFrontBlade);
+        UpperBodyAnimationStateController.WeaponDetectionOffBack.AddListener(TurnDetectionOffBackBlade);
+        UpperBodyAnimationStateController.onSlashFinish.AddListener(FinishSlash);
+        UpperBodyAnimationStateController.onCullEffect.AddListener(CreateCull);
 
         LowerBodyAnimationStateController = LowerBody.GetComponent<MainCharacterLowerAnimationController>();
         LowerBodyAnimationStateController.onDashFinish.AddListener(FinishDash);
@@ -115,7 +150,48 @@ public class MainCharacterController : UnitController
         //loading skill prefabs
         BladeProjectilePrefab = Resources.Load("Prefabs/Projectiles/BladeProjectile") as GameObject;
         RazorBladePrefab = Resources.Load("Prefabs/Projectiles/RazorBlade") as GameObject;
-                uicontroller = GameObject.Find("WorldUI").GetComponent<UIController>();
+        CullEffectPrefab = Resources.Load("Prefabs/AoE/CullEffect") as GameObject;
+        RainOfBladesPrefab = Resources.Load("Prefabs/SkillObjects/RainOfBlades") as GameObject;
+        BladeStormPrefab = Resources.Load("Prefabs/SkillObjects/BladeStorm") as GameObject;
+
+    }
+
+    public void Init(Dictionary<Skill, TempPlayerSkill> skills, List<Skill> slottedSkills)
+    {
+        uicontroller = GameObject.Find("WorldUI").GetComponent<UIController>();
+        Skills = skills;
+
+        foreach (KeyValuePair<Skill, TempPlayerSkill> s in skills)
+        {
+            if(s.Key!=Skill.PlayerNormalAttack&&s.Key!=Skill.PlayerNormalRangedAttack&&s.Key!=Skill.Default)
+            {
+                SkillPool.Add(s.Key);
+                SkillCooldowns.Add(0);
+            }
+        }
+
+        SlottedSkills = new List<Skill>();
+        SlottedSkills.Add(Skill.Default);
+        SlottedSkills.Add(Skill.Default);
+        SlottedSkills.Add(Skill.Default);
+        SlottedSkills.Add(Skill.Default);
+        for (int i =0;i<slottedSkills.Count;i++)
+        {
+            SlotSkill(slottedSkills[i], i);
+        }
+
+        uicontroller.UpdateCooldown(1, 0);
+        uicontroller.UpdateCooldown(2, 0);
+        uicontroller.UpdateCooldown(3, 0);
+        uicontroller.UpdateCooldown(4, 0);
+        //manual unlocks and upgrades
+        //LearnSkill(Skill.PlayerRazorBlades);
+        //LearnSkill(Skill.PlayerPuncture);
+        //LearnSkill(Skill.PlayerSlash);
+        //LearnSkill(Skill.PlayerCull);
+        // LearnSkill(Skill.PlayerRainOfBlades);
+       // LearnSkill(Skill.PlayerBladeStorm);
+      
     }
 
     // Update is called once per frame
@@ -128,7 +204,7 @@ public class MainCharacterController : UnitController
 
 
         //if not in action, these conditions are checked
-        if (!inAction)
+        if (!inAction && !GlobalVariables.Instance.HasUI)
         {
             //sets animation of lower body
             if (Grounded)
@@ -161,8 +237,23 @@ public class MainCharacterController : UnitController
             }
             else if(Input.GetKeyDown("q"))
             {
-                RazorBlades();
+                UseSkillInSlot(0);
             }
+            else if(Input.GetKeyDown("e"))
+            {
+                UseSkillInSlot(1);
+            }
+
+            else if (Input.GetKeyDown("r"))
+            {
+                UseSkillInSlot(2);
+            }
+
+            else if(Input.GetKeyDown("f"))
+            {
+                UseSkillInSlot(3);
+            }
+
             else if (Input.GetKeyDown("space") && Grounded)
             {
                 StartJump();
@@ -209,51 +300,54 @@ public class MainCharacterController : UnitController
             WalkRight = false;
         }
 
-        //changes character velocity/position based on states
-        if (isDashing)
+        if (!isPerformingMovementSkill)
         {
-            if(!facingRight)
-                rigidbody.velocity = new Vector2(-dashSpeed, 0);
-            else
-                rigidbody.velocity = new Vector2(dashSpeed, 0);
-        // if player left clicks during a dash, queue for a dash attack
-            if (Input.GetMouseButtonDown(0))
+            //changes character velocity/position based on states
+            if (isDashing)
             {
-                queueDashAttack=true;
+                if (!facingRight)
+                    rigidbody.velocity = new Vector2(-dashSpeed, 0);
+                else
+                    rigidbody.velocity = new Vector2(dashSpeed, 0);
+                // if player left clicks during a dash, queue for a dash attack
+                if (Input.GetMouseButtonDown(0))
+                {
+                    queueDashAttack = true;
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    queueDashRangedAttack = true;
+                }
+                if (canQueueDashAttack && queueDashAttack)
+                {
+                    NormalAttack();
+                    canQueueDashAttack = false;
+                    queueDashRangedAttack = false;
+                    queueDashAttack = false;
+                }
+                else if (canQueueDashAttack && queueDashRangedAttack)
+                {
+                    NormalRangedAttack();
+                    canQueueDashAttack = false;
+                    queueDashRangedAttack = false;
+                    queueDashAttack = false;
+                }
             }
-            else if (Input.GetMouseButtonDown(1))
+            else if (WalkLeft)
             {
-                queueDashRangedAttack = true;
-            }
-                if (canQueueDashAttack&&queueDashAttack)
-            {
-                NormalAttack();
-                canQueueDashAttack = false;
-                queueDashRangedAttack = false;
-                queueDashAttack = false;
-            }
-            else if(canQueueDashAttack&&queueDashRangedAttack)
-            {
-                NormalRangedAttack();
-                canQueueDashAttack = false;
-                queueDashRangedAttack = false;
-                queueDashAttack = false;
-            }
-        }
-       else if(WalkLeft)
-        {
-            rigidbody.velocity = new Vector2(-walkSpeed, rigidbody.velocity.y);
-            
-        }
-        else if(WalkRight)
-        {
-            rigidbody.velocity = new Vector2(walkSpeed, rigidbody.velocity.y);
-        }
-        else if(Grounded)
-        {
-            rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-        }
+                rigidbody.velocity = new Vector2(-walkSpeed, rigidbody.velocity.y);
 
+            }
+            else if (WalkRight)
+            {
+                rigidbody.velocity = new Vector2(walkSpeed, rigidbody.velocity.y);
+            }
+            else if (Grounded)
+            {
+                rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+            }
+        }
+        
         if (rigidbody.velocity.y<0&&!Grounded)
         {
             isJumpingUp = false;
@@ -279,10 +373,10 @@ public class MainCharacterController : UnitController
         //updates icons for skills
         for(int i = 0; i<SkillPool.Count; i++)
         {
-            float cooldown = SkillCooldowns[i];
+            float cooldown = SkillCooldowns[SkillPool.IndexOf(SlottedSkills[i])];
             if (cooldown > 0)
-                uicontroller.UpdateCooldown(i + 1, cooldown/Skills[SkillPool[i]].Cooldown);
-            if (MainStatController.CurrentEnergy() < Skills[SkillPool[i]].EnergyCost)
+                uicontroller.UpdateCooldown(i + 1, cooldown/Skills[SkillPool[SkillPool.IndexOf(SlottedSkills[i])]].Cooldown);
+            if (MainStatController.CurrentEnergy() < Skills[SkillPool[SkillPool.IndexOf(SlottedSkills[i])]].EnergyCost)
                 uicontroller.cannotUseSkill(i + 1);
             else
                 uicontroller.canUseSkill(i + 1);
@@ -290,7 +384,6 @@ public class MainCharacterController : UnitController
         }
 
     }
-
 
 
 
@@ -453,60 +546,236 @@ public class MainCharacterController : UnitController
 
     void RazorBlades()
     {
-        if (!isAttacking&&EnergyCanUse((float)Skills[Skill.PlayerRazorBlades].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRazorBlades)]<=0)
+        if (EnergyCanUse(Skills[Skill.PlayerRazorBlades].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRazorBlades)]<=0)
         {
             currentSkill = Skill.PlayerRazorBlades;
             currentUpgradedSkill = Skills[currentSkill];
             currentProjectilePrefab = RazorBladePrefab;
             DefaultRangedAttack();
-            MainStatController.SpendEnergy((float)Skills[Skill.PlayerRazorBlades].EnergyCost);
-            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRazorBlades)] = (float)Skills[Skill.PlayerRazorBlades].Cooldown;
+            MainStatController.SpendEnergy(Skills[Skill.PlayerRazorBlades].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRazorBlades)] = Skills[Skill.PlayerRazorBlades].Cooldown;
         }
     }
 
     #endregion
 
+    #region Puncture
+    void Puncture()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerPuncture].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerPuncture)] <= 0)
+        {
+            if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
+            {
+                facingRight = true;
+                FlipCharacter(true);
+            }
+            else
+            {
+                facingRight = false;
+                FlipCharacter(false);
+            }
+            if ((WalkLeft || WalkRight) && Grounded)
+                Walk();
+            currentSkill = Skill.PlayerPuncture;
+            currentUpgradedSkill = Skills[currentSkill];
+            inAction = true;
+            isAttacking = true;
+            UpperBody.GetComponent<Animator>().Play("Puncture");
+            //LowerBody.GetComponent<Animator>().Play("ForwardAction");
+            MainStatController.SpendEnergy(Skills[Skill.PlayerPuncture].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerPuncture)] = Skills[Skill.PlayerPuncture].Cooldown;
+        }
+    }
+    #endregion
+
+    #region Slash
+
+    void Slash()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerSlash].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSlash)] <= 0)
+        {
+            ClearCheckers();
+            if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
+            {
+                facingRight = true;
+                FlipCharacter(true);
+            }
+            else
+            {
+                facingRight = false;
+                FlipCharacter(false);
+            }
+            if ((WalkLeft || WalkRight) && Grounded)
+                Walk();
+            currentSkill = Skill.PlayerSlash;
+            currentUpgradedSkill = Skills[currentSkill];
+            inAction = true;
+            isAttacking = true;
+            isPerformingMovementSkill = true;
+            UpperBody.GetComponent<Animator>().Play("Slash");
+            LowerBody.GetComponent<Animator>().Play("SlashLower");
+            MainStatController.SpendEnergy(Skills[Skill.PlayerSlash].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSlash)] = Skills[Skill.PlayerSlash].Cooldown;
+            float dashDistanceMultiplier = 1 + SkillUpgrade.SlashDistance.SpecialAmount * (currentUpgradedSkill.Upgrades[SkillUpgrade.SlashDistance]);
+            if (!facingRight)
+                rigidbody.velocity = new Vector2(-dashSpeed * 1.3f*dashDistanceMultiplier, 0);
+            else
+                rigidbody.velocity = new Vector2(dashSpeed * 1.3f * dashDistanceMultiplier, 0);
+
+            float armorGained = currentUpgradedSkill.Upgrades[SkillUpgrade.SlashGainArmor]*SkillUpgrade.SlashGainArmor.SpecialAmount;
+            MainStatController.GainArmor(armorGained);
+
+        }
+    }
+
+    void FinishSlash()
+    {
+        isAttacking = false;
+        isPerformingMovementSkill = false;
+        inAction = false;
+        if (!Grounded)
+        {
+            if (!facingRight)
+                rigidbody.velocity = new Vector2(-10, 0);
+            else
+                rigidbody.velocity = new Vector2(10, 0);
+            isDashFalling = true;
+        }
+        ClearCheckers();
+    }
+    #endregion
+
+    #region Cull
+
+    void Cull()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerCull].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerCull)] <= 0)
+        {
+            if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
+            {
+                facingRight = true;
+                FlipCharacter(true);
+            }
+            else
+            {
+                facingRight = false;
+                FlipCharacter(false);
+            }
+            if ((WalkLeft || WalkRight) && Grounded)
+                Walk();
+            currentSkill = Skill.PlayerCull;
+            currentUpgradedSkill = Skills[currentSkill];
+            inAction = true;
+            isAttacking = true;
+            UpperBody.GetComponent<Animator>().Play("Cull");
+            LowerBody.GetComponent<Animator>().Play("ForwardAction");
+            MainStatController.SpendEnergy(Skills[Skill.PlayerCull].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerCull)] = Skills[Skill.PlayerCull].Cooldown;
+        }
+
+    }
+
+    void CreateCull()
+    {
+        Vector3 startingLocation = new Vector3(0, 0, 0);
+        startingLocation = FrontBlade.transform.position;
+        StartAoE(CullEffectPrefab, startingLocation);
+    }
+    #endregion
+
+    #region Rain Of Blades
+    void RainOfBlades()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerRainOfBlades].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRainOfBlades)] <= 0)
+        {
+            currentSkill = Skill.PlayerRainOfBlades;
+            currentUpgradedSkill = Skills[currentSkill];
+            RoBLocation = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, transform.position.y + 6);
+            DefaultSpellAttack();
+            MainStatController.SpendEnergy(Skills[Skill.PlayerRainOfBlades].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRainOfBlades)] = Skills[Skill.PlayerRainOfBlades].Cooldown;
+
+        }
+    }
+    #endregion
+
+    #region BladeStorm
+    void BladeStorm()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerBladeStorm].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerBladeStorm)] <= 0)
+        {
+            currentSkill = Skill.PlayerBladeStorm;
+            currentUpgradedSkill = Skills[currentSkill];
+            RoBLocation = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, transform.position.y + 6);
+            DefaultSpellAttack();
+            MainStatController.SpendEnergy(Skills[Skill.PlayerBladeStorm].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerBladeStorm)] = Skills[Skill.PlayerBladeStorm].Cooldown;
+
+        }
+    }
+
+    public void AutoCastBladeStorm()
+    {
+        if(Random.Range(0,100)<AutoCastChance)
+        {
+            CreateBladeStormBlade(BladestormInstance);
+        }
+    }
+
+    void CreateBladeStormBlade(TempPlayerSkill t)
+    {
+        int armorGain = t.Upgrades[SkillUpgrade.BladeStormArmor] * (int)SkillUpgrade.BladeStormArmor.SpecialAmount;
+        float sizeMulti = 1 + t.Upgrades[SkillUpgrade.BladeStormSize] * SkillUpgrade.BladeStormSize.SpecialAmount;
+        var instance = Instantiate(BladeStormPrefab, transform);
+        instance.transform.localPosition = new Vector3(0, Random.Range(-1f, 2f));
+        instance.transform.localScale = new Vector3(Random.Range(1.8f, 3)*sizeMulti, 2.5f);
+        instance.GetComponent<BladeStormControl>().Init(t, gameObject);
+        statController.GainArmor(armorGain);
+        
+    }
+    #endregion
+
+    #region AoE
+
+    protected void StartAoE(GameObject effect, Vector3 startingLocation)
+    {
+        if(facingRight)
+            CreateAoE(effect, startingLocation, 270);
+        else
+            CreateAoE(effect, startingLocation, 90);
+
+    }
+
+    protected void StartAoE(GameObject effect, Vector3 startingLocation, float rotation)
+    {
+        CreateAoE(effect, startingLocation, rotation);
+
+    }
+
+    void CreateAoE(GameObject effect, Vector3 startingLocation, float rotation)
+    {
+        GameObject instance = Instantiate(effect);
+        instance.transform.position = startingLocation;
+      //  instance.transform.parent = transform;
+        instance.GetComponent<AreaEffectControl>().setUnitType(unitType);
+        instance.GetComponent<AreaEffectControl>().SetUp(currentUpgradedSkill.Amount,  rotation, currentUpgradedSkill.Bleed, currentUpgradedSkill.HealthOnHit, gameObject);
+        instance.GetComponent<AreaEffectControl>().OnHitHeal.AddListener(Heal);
+        if (currentSkill.Equals(Skill.PlayerCull))
+        {
+            var armor = currentUpgradedSkill.Upgrades[SkillUpgrade.CullArmorOnKill] * SkillUpgrade.CullArmorOnKill.SpecialAmount;
+            var heal = currentUpgradedSkill.Upgrades[SkillUpgrade.CullHealthOnKill] * SkillUpgrade.CullHealthOnKill.SpecialAmount;
+            var AoE = currentUpgradedSkill.Upgrades[SkillUpgrade.CullSize] * SkillUpgrade.CullSize.SpecialAmount;
+            var slowMulti = 1+ currentUpgradedSkill.Upgrades[SkillUpgrade.CullSlowDamage] * SkillUpgrade.CullSlowDamage.SpecialAmount;
+            instance.GetComponent<CullEffectControl>().UpgradesSetup((int)heal, (int)armor,slowMulti);
+            instance.transform.localScale *= 1 + 1 * (AoE);
+        }
+        }
+
+
+    #endregion
+
     #region projectiles
 
-    /// <summary>
-    /// throws a projectile with default rotation and direction values
-    /// default rotation: 270 if facing right, 90 if facing left
-    /// default direction: 0 degree of the facing direction
-    /// </summary>
-    /// <param name="proj"></param>
-    /// <param name="startingLocation"></param>
-    protected void ThrowProjectile(GameObject proj, Vector3 startingLocation)
-    {
-
-        Vector3 dir = new Vector3(0, 0, 0);
-        float projSpeed;
-        float rotation;
-
-        if (facingRight)
-        {
-            projSpeed = currentUpgradedSkill.ProjectileSpeed;
-            rotation = 270;
-        }
-        else
-        {
-            projSpeed = -currentUpgradedSkill.ProjectileSpeed;
-            rotation = 90;
-
-        }
-        dir = new Vector3(projSpeed, 0, 0);
-        CreateProjectile(proj, startingLocation, dir, rotation);
-
-    }
-
-    /// <summary>
-    /// throws a projectile with specified rotation and direction values
-    /// </summary>
-    protected void ThrowProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction, float rotation)
-    {
-
-        CreateProjectile(proj, startingLocation, direction, rotation);
-
-    }
 
     /// <summary>
     /// creates projectile
@@ -515,7 +784,7 @@ public class MainCharacterController : UnitController
     /// <param name="startingLocation"></param>
     /// <param name="direction"></param>
     /// <param name="rotation"></param>
-    void CreateProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction, float rotation)
+   protected override void CreateProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction, float rotation)
     {
         GameObject instance = Instantiate(proj);
         instance.transform.position = startingLocation;
@@ -523,11 +792,18 @@ public class MainCharacterController : UnitController
         instance.GetComponent<ProjectileControl>().SetUp(currentUpgradedSkill.Amount, direction, rotation, currentUpgradedSkill.Piercing, currentUpgradedSkill.Bleed, currentUpgradedSkill.HealthOnHit);
         instance.GetComponent<ProjectileControl>().OnHitHeal.AddListener(Heal);
     }
+    protected override void CreateProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction)
+    {
+        GameObject instance = Instantiate(proj);
+        instance.transform.position = startingLocation;
+        instance.GetComponent<ProjectileControl>().setUnitType(unitType);
+        instance.GetComponent<ProjectileControl>().SetUp(currentUpgradedSkill.Amount, direction,  currentUpgradedSkill.Piercing, currentUpgradedSkill.Bleed, currentUpgradedSkill.HealthOnHit);
+        instance.GetComponent<ProjectileControl>().OnHitHeal.AddListener(Heal);
+    }
 
     void DefaultRangedAttack()
     {
-        if (!isNormalAttacking && !isAttacking)
-        {
+
             UpperBody.GetComponent<Animator>().Play("DefaultRangedAttack");
             currentUpgradedSkill = Skills[currentSkill];
             inAction = true;
@@ -545,7 +821,7 @@ public class MainCharacterController : UnitController
             if ((WalkLeft || WalkRight) && Grounded)
                 Walk();
         }
-     }
+     
 
     void DefaultRangedThrow()
     {
@@ -619,6 +895,49 @@ public class MainCharacterController : UnitController
     }
     #endregion
 
+    #region SpellCast
+
+    void DefaultSpellAttack()
+    {
+
+        UpperBody.GetComponent<Animator>().Play("SpellUse");
+        currentUpgradedSkill = Skills[currentSkill];
+        inAction = true;
+        isAttacking = true;
+        if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
+        {
+            facingRight = true;
+            FlipCharacter(true);
+        }
+        else
+        {
+            facingRight = false;
+            FlipCharacter(false);
+        }
+        if ((WalkLeft || WalkRight) && Grounded)
+            Walk();
+    }
+
+    void DefaultSpellCast()
+    {
+        if (currentSkill.Equals(Skill.PlayerRainOfBlades))
+        {
+            var instance = Instantiate(RainOfBladesPrefab);
+            instance.transform.position = RoBLocation;
+            instance.GetComponent<RainOfBladesControl>().Init(currentUpgradedSkill);
+
+        }
+        else if (currentSkill.Equals(Skill.PlayerBladeStorm))
+        {
+            int blades = currentUpgradedSkill.Upgrades[SkillUpgrade.BladeStormBlades] + 3; // 3 is base blades
+            for (int i = 0; i < blades; i++)
+            {
+                CreateBladeStormBlade(currentUpgradedSkill);
+            }
+        }
+    }
+    #endregion
+
     #region Jump related
 
     /// <summary>
@@ -688,6 +1007,7 @@ public class MainCharacterController : UnitController
 
             LowerBodyAnimationStateController.startDash();
             MainStatController.SpendStamina((float)PlayerStaminaCost.Dash);
+
         }
     }
 
@@ -699,6 +1019,7 @@ public class MainCharacterController : UnitController
     public void FinishDash()
     {
         isDashing = false;
+        
         inAction = false;
         if (!Grounded)
         {
@@ -729,6 +1050,7 @@ public class MainCharacterController : UnitController
     /// </summary>
     void Walk()
     {
+        isDashing = false;
         if (!isAttacking)
         {
             if (WalkRight)
@@ -770,6 +1092,9 @@ public class MainCharacterController : UnitController
         inAction = false;
         finishDashAttack();
     }
+
+
+
     /// <summary>
     /// clears action checkers when starting a new action to prevent errors
     /// </summary>
@@ -778,15 +1103,20 @@ public class MainCharacterController : UnitController
         inAction = false;
         isAttacking = false;
         isNormalAttacking = false;
+        isJumpingUp = false;
         queueDashAttack = false;
         canQueueDashAttack = false;
         queueDashRangedAttack = false;
+        isPerformingMovementSkill = false;
     }
 
 
-    public void stopAttacking()
+    protected override void StopAttacking()
     {
         isAttacking = false;
+        inAction = false;
+        currentSkill = Skill.Default;
+
     }
 
     /// <summary>
@@ -817,6 +1147,7 @@ public class MainCharacterController : UnitController
     /// </summary>
     private void TurnNAWeaponDetectionOn()
     {
+
         switch(NormalAttackRotation)
         {
             case 1:
@@ -826,12 +1157,11 @@ public class MainCharacterController : UnitController
                 TurnDetectionOnBackBlade();
                 break;
         }
+  
     }
-
-
-
     private void TurnNAWeaponDetectionOff()
     {
+
         switch (NormalAttackRotation)
         {
             case 1:
@@ -841,12 +1171,17 @@ public class MainCharacterController : UnitController
                 TurnDetectionOffBackBlade();
                 break;
         }
+        
+                
+
     }
 
-    protected  void TurnDetectionOnFrontBlade()
+
+    protected void TurnDetectionOnFrontBlade()
     {
         FrontBladeCollider.DetectionOn();
     }
+
 
     protected void TurnDetectionOffFrontBlade()
     {
@@ -869,13 +1204,153 @@ public class MainCharacterController : UnitController
     /// <param name="target"></param>
     public override void HitTarget(GameObject target)
     {
-        MainStatController.DealDamage(target, currentUpgradedSkill.Amount);
+        float currentAmount = currentUpgradedSkill.Amount;
+        if (currentSkill == Skill.PlayerPuncture)
+        {
+            int BleedDamageUpgrades = currentUpgradedSkill.Upgrades[SkillUpgrade.PunctureExtraDamage]; //deals extra damage if enemy is bleeding
+            int HealUpgrades = currentUpgradedSkill.Upgrades[SkillUpgrade.PunctureHeal]; //heals if enemy is bleeding
+            int ExposeUpgrade = currentUpgradedSkill.Upgrades[SkillUpgrade.PunctureExpose]; // exposes enemy on hit if taken
+            UnitStats targetStats = target.GetComponent<UnitStats>();
+            if (targetStats.isBleeding())
+            {
+                currentAmount += SkillUpgrade.PunctureExtraDamage.SpecialAmount* BleedDamageUpgrades;
+                MainStatController.Heal(SkillUpgrade.PunctureHeal.SpecialAmount * HealUpgrades);
+            }
+            if(ExposeUpgrade>0)
+            {
+                targetStats.Expose((int)SkillUpgrade.PunctureExpose.SpecialAmount);
+            }
+        }
+        else if(currentSkill == Skill.PlayerSlash)
+        {
+            int CooldownOnHitUpgrades = currentUpgradedSkill.Upgrades[SkillUpgrade.SlashCooldownOnHit]; //cooldown reduction per enemy hit
+            if(CooldownOnHitUpgrades>0)
+            {
+
+                SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSlash)] -= SkillUpgrade.SlashCooldownOnHit.SpecialAmount;
+            }
+        }
+        MainStatController.DealDamage(target, currentAmount);
         MainStatController.Heal(currentUpgradedSkill.HealthOnHit);
         MainStatController.BleedTarget(target, currentUpgradedSkill.Bleed);
         MainStatController.GainEnergy(currentUpgradedSkill.EnergyOnHit);
+
+
+
+
+    }
+    #endregion
+
+
+    #region Skill slots
+
+    void UseSkillInSlot(int index)
+    {
+        Skill skillInSlot = SlottedSkills[index];
+        if (skillInSlot == Skill.PlayerRazorBlades)
+            RazorBlades();
+        else if (skillInSlot == Skill.PlayerSlash)
+            Slash();
+        else if (skillInSlot == Skill.PlayerPuncture)
+            Puncture();
+        else if (skillInSlot == Skill.PlayerCull)
+            Cull();
+        else if (skillInSlot == Skill.PlayerRainOfBlades)
+            RainOfBlades();
+        else if (skillInSlot == Skill.PlayerBladeStorm)
+            BladeStorm();
     }
     #endregion
     #region player skill upgrades
+
+    /// <summary>
+    /// learns a skill, adding it to player's skill pool
+    /// </summary>
+    /// <param name="s"></param>
+    public void LearnSkill(Skill s)
+    {
+
+
+        if (s == Skill.PlayerNormalAttack)
+        {
+            Skills.Add(Skill.PlayerNormalAttack, new TempPlayerSkill(PlayerSkill.PlayerNormalAttack));
+        }
+        else if (s == Skill.PlayerNormalRangedAttack)
+        {
+            Skills.Add(Skill.PlayerNormalRangedAttack, new TempPlayerSkill(PlayerSkill.PlayerNormalRangedAttack));
+        }
+        else if (s == Skill.PlayerRazorBlades)
+        {
+            Skills.Add(Skill.PlayerRazorBlades, new TempPlayerSkill(PlayerSkill.PlayerRazorBlades));
+        }
+        else if (s == Skill.PlayerPuncture)
+        {
+            Skills.Add(Skill.PlayerPuncture, new TempPlayerSkill(PlayerSkill.PlayerPuncture));
+        }
+        else if (s == Skill.PlayerSlash)
+        {
+            Skills.Add(Skill.PlayerSlash, new TempPlayerSkill(PlayerSkill.PlayerSlash));
+        }
+        else if (s == Skill.PlayerCull)
+        {
+            Skills.Add(Skill.PlayerCull, new TempPlayerSkill(PlayerSkill.PlayerCull));
+        }
+        else if (s == Skill.PlayerRainOfBlades)
+        {
+            Skills.Add(Skill.PlayerRainOfBlades, new TempPlayerSkill(PlayerSkill.PlayerRainOfBlades));
+        }
+        else if (s == Skill.PlayerBladeStorm)
+        {
+            Skills.Add(Skill.PlayerBladeStorm, new TempPlayerSkill(PlayerSkill.PlayerBladeStorm));
+        }
+        if (!(s.Equals(Skill.PlayerNormalAttack)) && !(s.Equals(Skill.PlayerNormalRangedAttack)))
+        {
+            SkillPool.Add(s);
+            SkillCooldowns.Add(0);
+            //if there is an empty skill slot, slot the skill in it
+            for (int i = 0; i < SlottedSkills.Count; i++)
+            {
+                if (SlottedSkills[i] == Skill.Default)
+                {
+                    SlotSkill(s, i);
+                    break;
+                }
+            }
+        }
+
+    }
+    
+    /// <summary>
+    /// slots a skill  
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="index">index of skill</param>
+    protected void SlotSkill(Skill s,int index)
+    {
+        int finalIndex = 0;
+        //fill in an empty slot if there are any
+        for (int i=0;i<SlottedSkills.Count;i++)
+        {
+            if(SlottedSkills[i].Equals(Skill.Default))
+           {
+                SlottedSkills[i] = s;
+                finalIndex = i;
+                break;
+            }
+            else  if(i == index)
+            {
+                SlottedSkills[i] = s;
+                finalIndex = i;
+            }
+
+        }
+        if (s != Skill.Default)
+        {
+          
+            uicontroller.InitIcon(finalIndex + 1, s.Icon.IconName, Skills[s].EnergyCost, (int)Skills[s].Cooldown); 
+        }
+
+    }
 
     /// <summary>
     /// updates skill to include stats of all its upgrades
@@ -890,15 +1365,28 @@ public class MainCharacterController : UnitController
             for (int i = 0; i < upgrade.Value; i++)
             {
                 Skills[s].Amount += upgrade.Key.IncreasedAmount;
-                Skills[s].Cooldown -= (1-upgrade.Key.CooldownMultiplier);
-                Skills[s].EnergyCost *= upgrade.Key.CostMultiplier;
+                Skills[s].Cooldown -= Skills[s].BaseSkill.UpgradableSkill.Cooldown*(1-upgrade.Key.CooldownMultiplier);
+                Skills[s].EnergyCost -= Skills[s].BaseSkill.UpgradableSkill.EnergyCost*(1- upgrade.Key.CostMultiplier);
                 Skills[s].ProjectileSpeed *= upgrade.Key.ProjectileSpeedMultiplier;
                 Skills[s].Bleed += upgrade.Key.BleedAmount;
                 Skills[s].HealthOnHit += upgrade.Key.HealthOnHit;
                 Skills[s].EnergyOnHit += upgrade.Key.EnergyOnHit;
                 Skills[s].Piercing = upgrade.Key.ProjectilePierce;
             }
+       
+
         }
+        //if it is bladestorm, and cast on hit is taken, save a copy of the skill for later use
+        if(s.Equals(Skill.PlayerBladeStorm))
+        {
+           AutoCastChance =  Skills[s].Upgrades[SkillUpgrade.BladeStormAutoCast]*(int)SkillUpgrade.BladeStormAutoCast.SpecialAmount;
+            if(AutoCastChance>0)
+            {
+                BladestormInstance = Skills[s];
+            }
+        }
+        //need to add update icon as well
+        uicontroller.InitIcon(SlottedSkills.IndexOf(s)+1, s.Icon.IconName, Skills[s].EnergyCost, (int)Skills[s].Cooldown);
     }
 
     /// <summary>
@@ -906,12 +1394,21 @@ public class MainCharacterController : UnitController
     /// </summary>
     /// <param name="s">skill to be upgraded</param>
     /// <param name="index">index of upgrade</param>
-    protected void UpgradeSkill(Skill s, SkillUpgrade u)
+    public void UpgradeSkill(Skill s, SkillUpgrade u)
     {
         if(Skills[s].Upgrades.ContainsKey(u))
             Skills[s].Upgrades[u] += 1;
         UpdateSkill(s);
     }
+
+    public void SaveSkills()
+    {
+        ProgressSave.Instance.SaveSkills(Skills, SlottedSkills);
+    }
+
+    public Dictionary<Skill,TempPlayerSkill> GetSkillsWithUpgrades(){return Skills;}
+    public List<Skill> GetSlottedSkills() { return SlottedSkills; }
+
     #endregion
 
 
@@ -930,5 +1427,9 @@ public class MainCharacterController : UnitController
         MainStatController.Heal(amount);
     }
 
+    void OnHealthLost()
+    {
+        AutoCastBladeStorm();
+    }
 
 }

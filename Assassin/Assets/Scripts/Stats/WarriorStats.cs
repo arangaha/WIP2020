@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class WarriorStats : UnitStats
 {
-    // Start is called before the first frame update
-    protected override void Start()
+
+    public override void Init(int level)
     {
-        base.Start();
-        maxHealth = 150;
+        maxHealth = 1000+40*(level-1);
         currentHealth = maxHealth;
     }
 

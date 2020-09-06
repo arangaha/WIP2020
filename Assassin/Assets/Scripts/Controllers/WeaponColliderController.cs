@@ -20,7 +20,7 @@ public class WeaponColliderController : MonoBehaviour
   protected virtual void OnTriggerStay2D(Collider2D collision)
     {
         UnitController u = collision.transform.root.GetComponent<UnitController>();
-        if (u.unitType != unitType && canDetect)
+        if (u!=null && u.unitType != unitType && canDetect)
         {
             if (!hitList.Contains(u.gameObject))
             {

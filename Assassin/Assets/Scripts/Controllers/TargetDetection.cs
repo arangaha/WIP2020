@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 /// <summary>
 /// detection for AI 
 /// </summary>
@@ -10,12 +10,12 @@ public class TargetDetection : MonoBehaviour
     [SerializeField] List<GameObject> Allies = new List<GameObject>();
     [SerializeField] List<GameObject> Enemies = new List<GameObject>();
     UnitType unitType = UnitType.Enemy;
+    public onUpdateNearby onUpdateAllies = new onUpdateNearby();
+    public onUpdateNearby onUpdateEnemies = new onUpdateNearby();
 
-
-    // Update is called once per frame
-    void Update()
+    public void ChangeUnitType(UnitType u)
     {
-        
+        unitType = u;
     }
 
     void OnTriggerStay2D(Collider2D collision)
@@ -54,8 +54,11 @@ public class TargetDetection : MonoBehaviour
 
     void updateNearby()
     {
-        var u = transform.parent.GetComponent<UnitController>();
-        u.updateNearbyAllies(Allies);
-        u.updateNearbyEnemies(Enemies);
+
+
+        onUpdateAllies.Invoke(Allies);
+        onUpdateEnemies.Invoke(Enemies);
     }
+
+    public class onUpdateNearby : UnityEvent<List<GameObject>> { };
 }

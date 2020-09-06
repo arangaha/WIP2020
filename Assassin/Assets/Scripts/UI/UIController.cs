@@ -10,14 +10,13 @@ public class UIController : MonoBehaviour
     [SerializeField] IconController icon3;
     [SerializeField] IconController icon4;
 
-    [SerializeField] List<Transform> spawnLocations;
-    GameObject Warrior;
+
     // Start is called before the first frame update
     void Start()
     {
         Screen.SetResolution(1600, 900,true);
         damageTextPrefab = Resources.Load("Prefabs/UI/DamageText") as GameObject;
-        Warrior = Resources.Load("Prefabs/Characters/Warrior") as GameObject;
+      
     }
 
     // Update is called once per frame
@@ -65,6 +64,8 @@ public class UIController : MonoBehaviour
             }
         }
     }
+
+
 
     /// <summary>
     /// updates cooldown of an icon
@@ -142,13 +143,5 @@ public class UIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// spawns an enemy 
-    /// </summary>
-    public void SpawnEnemy()
-    {
-        int num = Random.Range(0, spawnLocations.Count);
-        var instance = Instantiate(Warrior);
-        instance.transform.position = spawnLocations[num].position;
-    }
+
 }

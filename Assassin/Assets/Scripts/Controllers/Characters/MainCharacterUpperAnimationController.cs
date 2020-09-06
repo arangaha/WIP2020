@@ -11,6 +11,19 @@ public class MainCharacterUpperAnimationController : CharacterAnimationStateCont
     public UnityEvent onRangedNAThrow = new UnityEvent();
     public UnityEvent onDefaultRangedThrow = new UnityEvent();
     public UnityEvent onDefaultRangedFinish = new UnityEvent();
+    public UnityEvent WeaponDetectionOnFront = new UnityEvent();
+    public UnityEvent WeaponDetectionOnBack = new UnityEvent();
+    public UnityEvent WeaponDetectionOffFront = new UnityEvent();
+    public UnityEvent WeaponDetectionOffBack = new UnityEvent();
+    public UnityEvent onSlashFinish = new UnityEvent();
+    public UnityEvent onCullEffect = new UnityEvent();
+    public UnityEvent onDefaultSpellUse = new UnityEvent();
+
+    #region skill event triggers
+    public void DefaultSpellUse()
+    {
+        onDefaultSpellUse.Invoke();
+    }
 
     public void DefaultThrowProjectile()
     {
@@ -42,5 +55,37 @@ public class MainCharacterUpperAnimationController : CharacterAnimationStateCont
         onRangedNAFinish.Invoke();
     }
 
+    public void finishSlash()
+    {
+        onSlashFinish.Invoke();
+    }
+
+    public void StartCullEffect()
+    {
+        onCullEffect.Invoke();
+    }
+    #endregion
+
+    #region detections
+    public void WeaponOnFront()
+    {
+        WeaponDetectionOnFront.Invoke();
+    }
+
+    public void WeaponOnBack()
+    {
+        WeaponDetectionOnBack.Invoke();
+    }
+
+    public void WeaponOffFront()
+    {
+        WeaponDetectionOffFront.Invoke();
+    }
+
+    public void WeaponOffBack()
+    {
+        WeaponDetectionOffBack.Invoke();
+    }
+    #endregion
 
 }

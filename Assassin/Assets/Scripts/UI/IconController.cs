@@ -24,6 +24,10 @@ public class IconController : MonoBehaviour
         this.cooldown = cooldown;
     }
 
+    public void Initialize(string iconName)
+    {
+        icon.sprite = Resources.Load<Sprite>("Sprites/Icons/" + iconName);
+    }
     public void canUse()
     {
         CostBlock.SetActive(false);

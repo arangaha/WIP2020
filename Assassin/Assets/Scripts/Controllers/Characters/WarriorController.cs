@@ -15,7 +15,7 @@ public class WarriorController : EnemyController
 
         base.Start();
         animator = GetComponent<Animator>();
-        walkSpeed = 8;
+      BasewalkSpeed =   walkSpeed = 8;
         xScale = 0.5f;
         SwordCollider.WeaponCollisionEnterEvent.AddListener(HitTarget);
         SkillPool.Add(Skill.WarriorSwing);

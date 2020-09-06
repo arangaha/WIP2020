@@ -14,17 +14,28 @@ public abstract class EnemyController : UnitController
     [SerializeField] protected int totalSkillWeight = 0; //weight for which skills are being used 
     [SerializeField] protected float CooldownMultiplier = 1;//multiplier for cooldowns
 
+    [SerializeField] protected int exhaustCount = 3; // actions before unit needs to rest
+    [SerializeField] protected int currentExhaustCount = 3;
+    [SerializeField] protected float restTimer = 2; // rest period in between actions in seconds
+    [SerializeField] protected float currentRestTimer = 0;
+    [SerializeField] protected float chaseTimer = 2; //timer for action pick to be done again after chasing for 2 seconds
+    TargetDetection targetDetect;
     // Start is called before the first frame update
     protected override void Start()
     {
+        xScale = transform.localScale.x;
         base.Start();
         CooldownMultiplier = (float )Random.Range(5, 15) / 10;
         unitType = UnitType.Enemy;
+        targetDetect = transform.Find("TargetDetection").GetComponent<TargetDetection>() ;
+        targetDetect.onUpdateAllies.AddListener(updateNearbyAllies);
+        targetDetect.onUpdateEnemies.AddListener(updateNearbyEnemies);
     }
 
     protected override void Update()
     {
         base.Update();
+
 
         if (!inAction)
         {
@@ -32,6 +43,7 @@ public abstract class EnemyController : UnitController
             if (moving)
             {
                 Walk();
+                chaseTimer -= Time.deltaTime;
             }
             else
             {
@@ -45,8 +57,16 @@ public abstract class EnemyController : UnitController
             //if a skill is queued and is tracking, start track process
             if (tracking)
             {
-                TrackUnit();
+                if (chaseTimer > 0)
+                    TrackUnit();
+                else
+                    pickAction();
 
+            }
+            else if(currentRestTimer > 0)
+            {
+                currentRestTimer-= Time.deltaTime;
+                GetComponent<Animator>().Play("Idle");
             }
             //if not pick a new action
             else
@@ -81,6 +101,13 @@ public abstract class EnemyController : UnitController
                 {
                     if (TrackedUnit)
                         FaceTarget();
+                    //if unit is exhausted, rest for rest timer
+                    currentExhaustCount -= 1;
+                    if (currentExhaustCount <= 0)
+                    {
+                        currentExhaustCount = exhaustCount;
+                        currentRestTimer = restTimer;
+                    }
                     startTriggeredAction(queuedSkill);
                     tracking = false;
                    // pickAction();
@@ -124,6 +151,7 @@ public abstract class EnemyController : UnitController
     protected virtual void pickAction()
     {
         queuedSkill = Skill.Default;
+        chaseTimer = 2;
         for (int i = 0; i < SkillPool.Count; i++)
         {
             if (SkillCooldowns[i] <= 0)
@@ -228,20 +256,22 @@ public abstract class EnemyController : UnitController
         {
             FlipCharacter(false);
             moveRight = false;
+            facingRight = false;
         }
         else
         {
             FlipCharacter(true);
             moveRight = true;
+            facingRight = true;
         }
     }
 
     /// <summary>
     /// below 2 functions are to tell the unit to move towards target or not
     /// </summary>
-    protected void startMoving()
+    protected virtual void startMoving()
     {
-
+        chaseTimer = 2;
         moving = true;
         GetComponent<Animator>().Play("Walk");
     }
@@ -249,6 +279,36 @@ public abstract class EnemyController : UnitController
     {
 
         moving = false;
+    }
+    #endregion
+
+    #region projectiles
+
+
+    /// <summary>
+    /// creates projectile
+    /// </summary>
+    /// <param name="proj"></param>
+    /// <param name="startingLocation"></param>
+    /// <param name="direction"></param>
+    /// <param name="rotation"></param>
+    protected override void CreateProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction, float rotation)
+    {
+        GameObject instance = Instantiate(proj);
+        instance.transform.position = startingLocation;
+        instance.GetComponent<ProjectileControl>().setUnitType(unitType);
+        instance.GetComponent<ProjectileControl>().SetUp(currentSkill.Amount, direction, rotation, currentSkill.Piercing, currentSkill.Bleed, currentSkill.HealthOnHit);
+        
+    }
+
+
+    protected override void CreateProjectile(GameObject proj, Vector3 startingLocation, Vector3 direction)
+    {
+        GameObject instance = Instantiate(proj);
+        instance.transform.position = startingLocation;
+        instance.GetComponent<ProjectileControl>().setUnitType(unitType);
+        instance.GetComponent<ProjectileControl>().SetUp(currentSkill.Amount, direction,  currentSkill.Piercing, currentSkill.Bleed, currentSkill.HealthOnHit);
+
     }
     #endregion
 }
