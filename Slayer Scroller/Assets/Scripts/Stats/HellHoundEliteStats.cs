@@ -10,7 +10,7 @@ public class HellHoundEliteStats : UnitStats
         Level = level;
         maxHealth = 600 + 300 * (level - 1);
         currentHealth = maxHealth;
-        damageScaling = 0.02f;
+        damageScaling = 0.1f;
     }
 
     protected override void Die()
@@ -26,6 +26,6 @@ public class HellHoundEliteStats : UnitStats
 
     public override float DamageMulti()
     {
-        return 1 + (Level - 10) * damageScaling;
+        return 1 + (Level - 5) * damageScaling;
     }
 }

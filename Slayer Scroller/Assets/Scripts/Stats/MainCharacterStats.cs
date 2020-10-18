@@ -24,6 +24,7 @@ public class MainCharacterStats : UnitStats
         HealthNumber = GameObject.Find("PlayerHealthNumber").GetComponent<TextMeshProUGUI>();
         StaminaNumber = GameObject.Find("PlayerStaminaNumber").GetComponent<TextMeshProUGUI>();
         EnergyNumber = GameObject.Find("PlayerEnergyNumber").GetComponent<TextMeshProUGUI>();
+        StartCoroutine(TimedUpdate());
     }
 
     public override void Init(int level)

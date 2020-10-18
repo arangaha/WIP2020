@@ -11,7 +11,7 @@ public class EliteWarriorStats : UnitStats
         Level = level;
         maxHealth = 3000 + 1000 * (level - 1);
         currentHealth = maxHealth;
-        damageScaling = 0.02f;
+        damageScaling = 0.1f;
     }
 
     public override void TakeDamage(float amount)
@@ -37,7 +37,7 @@ public class EliteWarriorStats : UnitStats
 
     public override float DamageMulti()
     {
-        return 1 + (Level - 20) * damageScaling;
+        return 1 + (Level - 10) * damageScaling;
     }
     public void FadeAway()
     {

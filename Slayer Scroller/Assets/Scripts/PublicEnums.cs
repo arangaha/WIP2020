@@ -89,26 +89,26 @@ public sealed class Skill
     public static Skill WarriorJab = new Skill("Warrior Jab", Icon.Default, 13, 7, 6, false,0, 0, 0,0);
     public static Skill WarriorNA = new Skill("Warrior Normal Attack", Icon.Default, 10, 3, 0, false,0, 0, 0,0);
 
-    public static Skill EliteWarriorSwing = new Skill("Elite Warrior Swing", Icon.Default, 25, 15, 0, false, 0, 0, 0, 0);
-    public static Skill EliteWarriorBeam = new Skill("Elite Warrior Beam", Icon.Default, 25, 0, 0, false, 0, 0, 0, 0); //do not add to skill pool
-    public static Skill EliteWarriorJab = new Skill("Elite Warrior Jab", Icon.Default, 15, 15, 6, false, 0, 5, 0, 0);
-    public static Skill EliteWarriorWave = new Skill("Elite Warrior Wave", Icon.Default, 40, 0, 0, false, 0, 0, 0, 0); // do not add to skill pool
-    public static Skill EliteWarriorSpikes = new Skill("Elite Warrior Spikes", Icon.Default, 8 , 12, 6, false, 0, 0, 0, 0);
-    public static Skill EliteWarriorLeap = new Skill("Elite Warrior Jab", Icon.Default, 50, 12, 6, false, 0, 0, 0, 0);
-    public static Skill EliteWarriorStormCall = new Skill("Elite Warrior Storm Call", Icon.Default, 40, 18, 6, false, 0, 0, 0, 0);
-    public static Skill EliteWarriorMegaBeam = new Skill("Elite Warrior Mega Beam", Icon.Default, 8, 18, 8, false, 0, 0, 0, 0);
+    public static Skill EliteWarriorSwing = new Skill("Elite Warrior Swing", Icon.Default, 15, 15, 0, false, 0, 0, 0, 0);
+    public static Skill EliteWarriorBeam = new Skill("Elite Warrior Beam", Icon.Default, 15, 0, 0, false, 0, 0, 0, 0); //do not add to skill pool
+    public static Skill EliteWarriorJab = new Skill("Elite Warrior Jab", Icon.Default, 10, 15, 6, false, 0, 3, 0, 0);
+    public static Skill EliteWarriorWave = new Skill("Elite Warrior Wave", Icon.Default, 25, 0, 0, false, 0, 0, 0, 0); // do not add to skill pool
+    public static Skill EliteWarriorSpikes = new Skill("Elite Warrior Spikes", Icon.Default, 5 , 12, 6, false, 0, 0, 0, 0);
+    public static Skill EliteWarriorLeap = new Skill("Elite Warrior Leap", Icon.Default, 25, 12, 6, false, 0, 0, 0, 0);
+    public static Skill EliteWarriorStormCall = new Skill("Elite Warrior Storm Call", Icon.Default, 25, 18, 6, false, 0, 0, 0, 0);
+    public static Skill EliteWarriorMegaBeam = new Skill("Elite Warrior Mega Beam", Icon.Default, 5, 18, 8, false, 0, 0, 0, 0);
 
     public static Skill HellHoundLeap = new Skill("Hellhound Leap", Icon.Default, 7, 12, 12, false, 0, 0, 0, 0);
     public static Skill HellHoundNA = new Skill("Hellhound Normal Attack", Icon.Default, 7, 3, 0, false, 0, 0, 0, 0);
     public static Skill HellHoundFireball = new Skill("Hellhound Fireball", Icon.Default, 10, 12, 8, false, 0, 0, 0, 0, 15, false);
 
-    public static Skill HellHoundVariantNA = new Skill("Hellhound Elite Normal Attack", Icon.Default, 15, 4, 0, false, 0, 2, 0, 0);
-    public static Skill HellHoundVariantFireball = new Skill("Hellhound Elite Fireball", Icon.Default, 30, 12, 12, false, 0, 0, 0, 0,10,true);
+    public static Skill HellHoundVariantNA = new Skill("Hellhound Elite Normal Attack", Icon.Default, 10, 4, 0, false, 0, 2, 0, 0);
+    public static Skill HellHoundVariantFireball = new Skill("Hellhound Elite Fireball", Icon.Default, 20, 12, 12, false, 0, 0, 0, 0,10,true);
   //  public static Skill HellHoundVariantSpikeShot = new Skill("Hellhound Elite Spike Shot", Icon.Default, 5, 8,25, false, 0, 1, 0, 0); //spikes come of body to hit, fades away and reappears back in body after
   //  public static Skill HellHoundVariantMortar = new Skill("Hellhound Elite Mortar", Icon.Default, 30, 15, 30, false, 0, 0, 0, 0); //lobs mortars that plants themselves on the floor, explodes after 5 seconds
-    public static Skill HellHoundVariantSlam = new Skill("Hellhound Elite Slam", Icon.Default, 25, 10, 15, false, 0, 0, 0, 0);
+    public static Skill HellHoundVariantSlam = new Skill("Hellhound Elite Slam", Icon.Default, 20, 10, 15, false, 0, 0, 0, 0);
   //  public static Skill HellHoundVariantCharge = new Skill("Hellhound Elite Charge", Icon.Default, 15, 12, 12, false, 0, 0, 0, 0); // charge in the direction of enemy, hit enemies are slowed
-    public static Skill HellHoundVariantLeap = new Skill("Hellhound Elite Leap", Icon.Default, 12, 12, 8, false, 0, 0, 0, 0);
+    public static Skill HellHoundVariantLeap = new Skill("Hellhound Elite Leap", Icon.Default, 10, 12, 8, false, 0, 0, 0, 0);
 
 
     public static Skill HellbatNA = new Skill("Hellbat Normal Attack", Icon.Default, 4, 8, 0, false, 0, 0, 0, 0);
