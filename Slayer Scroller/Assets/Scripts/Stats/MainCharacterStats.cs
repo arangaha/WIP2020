@@ -39,16 +39,20 @@ public class MainCharacterStats : UnitStats
         currentEnergy = 0; //start at 0
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (currentEnergy < maxEnergy)
-            currentEnergy += 0.02f;
-        if (currentStamina < maxStamina)
-            currentStamina += 0.1f+0.005f * (Level - 1);
-        UpdateResourceBar();
-    }
 
+
+    IEnumerator TimedUpdate()
+    {
+        while (true)
+        {
+            if (currentEnergy < maxEnergy)
+                currentEnergy += 0.2f;
+            if (currentStamina < maxStamina)
+                currentStamina += 1f + 0.5f * (Level - 1);
+            UpdateResourceBar();
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
 
     /// <summary>
     /// updates visuals of resource bars in UI

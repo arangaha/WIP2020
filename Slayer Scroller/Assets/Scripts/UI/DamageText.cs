@@ -57,7 +57,7 @@ public class DamageText : MonoBehaviour
             {
                 Destroy(gameObject);
             }
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(0.01f);
 
         }
     }
