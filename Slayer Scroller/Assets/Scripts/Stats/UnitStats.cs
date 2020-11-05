@@ -13,10 +13,13 @@ public abstract class UnitStats : MonoBehaviour
     [SerializeField] protected float attack = 10;
     [SerializeField] protected float armor = 0; //prevents damage from taken, lost after taken damage equal to amount
     [SerializeField] protected UnitController unitController;
+    [SerializeField] protected float protection = 1; //multiplier for the next hit received
 
     #region Debuffs
     [SerializeField] protected int BleedAmount= 0;
     [SerializeField] protected int BleedCounter = 4; //countdown for bleed
+    [SerializeField] protected float extraBleedMulti = 0;
+    [SerializeField] protected float extraBleedCounter = 8;
     [SerializeField] protected int slowCounter = 0; //countdown for slow
     #endregion
 
@@ -25,7 +28,7 @@ public abstract class UnitStats : MonoBehaviour
     [SerializeField] protected int ExposeCounter = 0; // exposed for # of hits the unit will receieve. exposed hits deal 20% more damage
     public UnityEvent OnDeath = new UnityEvent();
     UIController uicontroller;
-    protected float  damageScaling = 0.1f; //added multiplier to damage per stage
+    protected float  damageScaling = 0.05f; //added multiplier to damage per stage
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -49,7 +52,7 @@ public abstract class UnitStats : MonoBehaviour
         {
             if (BleedAmount >0&&BleedCounter>0)
             {
-                TakeDamage(BleedAmount);
+                TakeBleedDamage(BleedAmount);
                 BleedCounter -= 1;
                 if (BleedCounter <= 0)
                     BleedAmount = 0;
@@ -90,6 +93,14 @@ public abstract class UnitStats : MonoBehaviour
         {
             ExposeCounter --;
             totalAmount *= 1.2f;
+            if (ExposeCounter <= 0)
+                unitController.HideExposeEffect();
+        }
+        if(protection!=1)
+        {
+            totalAmount *= protection;
+            protection = 1;
+            unitController.HideProtectionEffect();
 
         }
         if (totalAmount > armor)
@@ -111,12 +122,29 @@ public abstract class UnitStats : MonoBehaviour
             Die();
         }
     }
+    public virtual void TakeBleedDamage(float amount)
+    {
+        float totalAmount = amount*(1+extraBleedMulti);
 
+            currentHealth -=totalAmount ;
+        if (extraBleedMulti > 0)
+            extraBleedCounter--;
+        if (extraBleedCounter <= 0)
+            extraBleedMulti = 0;
+
+        UpdateHealth();
+        uicontroller.CreateDamageText(totalAmount, transform.position, true);
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            Die();
+        }
+    }
     /// <summary>
     /// gets the percentage of current health to max health
     /// </summary>
     /// <returns>number between 0 and 1 to represent the percentage</returns>
-public float PercentageHealth()
+    public float PercentageHealth()
     {
         return currentHealth / maxHealth;
     }
@@ -150,6 +178,18 @@ public float PercentageHealth()
     {
         return maxHealth;
     }
+
+    /// <summary>
+    /// causes the hit recieved to have this multiplier instead. (float below 1 for damage reduction)
+    /// </summary>
+    /// <param name="multi"></param>
+    public void Protect (float multi)
+    {
+        protection = multi;
+        if(protection<1)
+        unitController.ShowProtectionEffect();
+    }
+
     #endregion
 
     #region stamina related
@@ -205,6 +245,23 @@ public float PercentageHealth()
             return false;
 
     }
+
+    public void RefreshBleed()
+    {if(BleedAmount>0)
+        BleedCounter = 4;
+    }
+
+    public void RemoveBleed()
+    {
+        BleedCounter = 0;
+        BleedAmount = 0;
+    }
+
+    public void IncreaseBleedTaken(float multi)
+    {
+        extraBleedMulti = multi;
+        extraBleedCounter = 8;
+    }
     #endregion
 
     #region debuffs related
@@ -214,7 +271,11 @@ public float PercentageHealth()
     /// <param name="i"></param>
     public void Expose(int i)
     {
-        ExposeCounter += i;
+        if (i > 0)
+        {
+            ExposeCounter += i;
+            unitController.ShowExposeEffect();
+        }
     }
 
     /// <summary>
@@ -225,6 +286,7 @@ public float PercentageHealth()
     {
         if(slowCounter<i)
         {
+            unitController.SlowSpeed();
             slowCounter = i;
         }
     }

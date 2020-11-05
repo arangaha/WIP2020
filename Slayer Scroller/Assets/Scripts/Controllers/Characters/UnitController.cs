@@ -34,6 +34,15 @@ public abstract class UnitController : MonoBehaviour
     public OnDestroyEvent onDestroy = new OnDestroyEvent();
     public UnityEvent onDeath = new UnityEvent();
 
+    #region debuff/buff effects
+    GameObject ExposeEffectPrefab;
+    GameObject ExposeEffectInstance;
+    GameObject ProtectionEffectPrefab;
+    GameObject ProtectionEffectInstance;
+    protected float EffectXOffset = 0; //offset of effect for certain units
+   protected float EffectWidth = 1; //width multiplier for bigger/smaller units
+    #endregion
+
     #region body parts
     [SerializeField] protected List<GameObject> BodyParts;
     [SerializeField] protected float transparency = 1;
@@ -59,9 +68,12 @@ public abstract class UnitController : MonoBehaviour
         HealthbarPrefab = Resources.Load("Prefabs/Healthbar") as GameObject;
         HealthbarInstance = Instantiate(HealthbarPrefab, transform);
         HealthbarInstance.transform.localPosition = new Vector3(HealthbarOffsetX, HealthbarOffsetY, 0);
-        HealthbarInstance.transform.localScale = new Vector3( 0.5f / transform.localScale.x, 0.5f / transform.localScale.y,1);
+        HealthbarInstance.transform.localScale = new Vector3(0.5f / transform.localScale.x, 0.5f / transform.localScale.y, 1);
         HealthbarInstance.GetComponent<HealthBar>().InitMaxHealth((int)statController.MaxHealth());
         HealthbarInstance.GetComponent<HealthBar>().UpdateHealth(1, (int)statController.CurrentHealth());
+
+        ExposeEffectPrefab = Resources.Load("Prefabs/Effects/ExposeEffect") as GameObject;
+        ProtectionEffectPrefab = Resources.Load("Prefabs/Effects/ProtectionEffect") as GameObject;
 
     }
 
@@ -77,7 +89,7 @@ public abstract class UnitController : MonoBehaviour
     }
     public virtual void HitTarget(GameObject target)
     {
-      //  Debug.Log("hit: " + target.name);
+        //  Debug.Log("hit: " + target.name);
         statController.DealDamage(target, currentSkill.Amount);
         statController.Heal(currentSkill.HealthOnHit);
 
@@ -116,9 +128,9 @@ public abstract class UnitController : MonoBehaviour
                 if (getUnitDistance(listOfUnits[i]) < closestDistance)
                 {
 
-                        closestDistance = getUnitDistance(listOfUnits[i]);
-                        index = i;
-                    
+                    closestDistance = getUnitDistance(listOfUnits[i]);
+                    index = i;
+
                 }
             }
             return listOfUnits[index];
@@ -208,7 +220,7 @@ public abstract class UnitController : MonoBehaviour
     /// <param name="percentage">percentage of health of owner. must be between 0 and 1</param>
     public void UpdateHealth(float percentage, float currentHealth)
     {
-        HealthbarInstance.GetComponent<HealthBar>().UpdateHealth(percentage,currentHealth);
+        HealthbarInstance.GetComponent<HealthBar>().UpdateHealth(percentage, currentHealth);
     }
 
     /// <summary>
@@ -232,7 +244,7 @@ public abstract class UnitController : MonoBehaviour
         float x = (targetLoc.x - startingLoc.x) / (Mathf.Abs(targetLoc.x - startingLoc.x) + Mathf.Abs(targetLoc.y - startingLoc.y));
         float y = (targetLoc.y - startingLoc.y) / (Mathf.Abs(targetLoc.x - startingLoc.x) + Mathf.Abs(targetLoc.y - startingLoc.y));
 
-        return new Vector3(x * projectileSpeed, y * projectileSpeed,0);
+        return new Vector3(x * projectileSpeed, y * projectileSpeed, 0);
     }
 
     /// <summary>
@@ -253,7 +265,6 @@ public abstract class UnitController : MonoBehaviour
         }
     }
 
-
     #region debuff related
     public virtual void SlowSpeed()
     {
@@ -272,7 +283,7 @@ public abstract class UnitController : MonoBehaviour
         {
 
             transparency -= 0.006f;
-            for(int i = 0; i<BodyParts.Count;i++)
+            for (int i = 0; i < BodyParts.Count; i++)
             {
                 BodyParts[i].GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, transparency);
             }
@@ -297,6 +308,48 @@ public abstract class UnitController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+
+    #region debuff/buff visuals
+    public void ShowExposeEffect()
+    {
+        if (!ExposeEffectInstance)
+        {
+            ExposeEffectInstance = Instantiate(ExposeEffectPrefab, transform);
+            ExposeEffectInstance.transform.localScale /= transform.localScale.x;
+            ExposeEffectInstance.GetComponent<ExposeEffect>().setXOffset(EffectXOffset);
+            ExposeEffectInstance.GetComponent<ExposeEffect>().setWidth(EffectWidth);
+
+
+        }
+        else
+            ExposeEffectInstance.SetActive(true);
+    }
+
+    public void HideExposeEffect()
+    {
+        ExposeEffectInstance.SetActive(false);
+    }
+
+    public void ShowProtectionEffect()
+    {
+        if (!ProtectionEffectInstance)
+        {
+            ProtectionEffectInstance = Instantiate(ProtectionEffectPrefab, transform);
+            ProtectionEffectInstance.transform.localScale /= transform.localScale.x;
+            ProtectionEffectInstance.GetComponent<ExposeEffect>().setXOffset(EffectXOffset);
+            ProtectionEffectInstance.GetComponent<ExposeEffect>().setWidth(EffectWidth);
+
+
+        }
+        else
+            ProtectionEffectInstance.SetActive(true);
+    }
+
+    public void HideProtectionEffect()
+    {
+        ProtectionEffectInstance.SetActive(false);
+    }
+    #endregion
 }
 
 

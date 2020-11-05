@@ -120,7 +120,7 @@ public class StageController : MonoBehaviour
                 }
             }
 
-            currentStage.UpgradeRewards = stageNumber / 10;
+            currentStage.UpgradeRewards = stageNumber / 4;
 
             stagetext.text = "Endless Stage " + (StageNumber - XMLLoad.Instance.stageList.stage.Count);
             stageCornertext.text = "Endless Stage " + (StageNumber - XMLLoad.Instance.stageList.stage.Count);
@@ -257,14 +257,15 @@ public class StageController : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         MainCharacterController cont = PlayerInstance.GetComponent<MainCharacterController>();
-        Skill unlockedSkill = UnlockSkill(currentStage.UnlockedSkill);
+        List<Skill> unlockedSkill = UnlockSkill(currentStage.UnlockedSkill);
 
         //level up  stats on player and save stats 
         ProgressSave.Instance.LevelUp();
 
         //unlock skill for player
-        if(unlockedSkill!=Skill.Default)
-            cont.LearnSkill(unlockedSkill);
+            for(int i = 0; i< unlockedSkill.Count;i++)
+            cont.LearnSkill(unlockedSkill[i]);
+        
 
 
         //display stage complete screen
@@ -340,35 +341,48 @@ public class StageController : MonoBehaviour
     /// unlocks skill that is unlocked by completing this stage. leave at empty if there is none
     /// </summary>
     /// <param name="SkillName"></param>
-    Skill UnlockSkill(string SkillName)
+    List<Skill> UnlockSkill(List<string> SkillName)
     {
-        Skill unlockedSkill = Skill.Default;
-        switch (SkillName)
+        List<Skill >unlockedSkill = new List<Skill>();
+        if(SkillName!=null)
+        for (int i = 0; i < SkillName.Count; i++)
         {
-            case "RazorBlades":
-                unlockedSkill = Skill.PlayerRazorBlades;
-                break;
-            case "Puncture":
-                unlockedSkill = Skill.PlayerPuncture;
-                break;
-            case "Slash":
-                unlockedSkill = Skill.PlayerSlash;
-                break;
-            case "Cull":
-                unlockedSkill = Skill.PlayerCull;
-                break;
+            switch (SkillName[i])
+            {
+                case "RazorBlades":
+                    unlockedSkill.Add(Skill.PlayerRazorBlades);
+                    break;
+                case "Puncture":
+                    unlockedSkill.Add(Skill.PlayerPuncture);
+                    break;
+                case "Slash":
+                    unlockedSkill .Add(Skill.PlayerSlash);
+                    break;
+                case "Cull":
+                    unlockedSkill.Add( Skill.PlayerCull);
+                    break;
 
-            case "RainOfBlades":
-                unlockedSkill = Skill.PlayerRainOfBlades;
-                break;
+                case "RainOfBlades":
+                    unlockedSkill.Add(Skill.PlayerRainOfBlades);
+                    break;
 
-            case "Bladestorm":
-                unlockedSkill = Skill.PlayerBladeStorm;
-                break;
+                case "Bladestorm":
+                    unlockedSkill.Add(Skill.PlayerBladeStorm);
+                    break;
 
-            case "Chakram":
-                unlockedSkill = Skill.PlayerChakram;
-                break;
+                case "Chakram":
+                    unlockedSkill.Add(Skill.PlayerChakram);
+                    break;
+                case "Perforate":
+                    unlockedSkill.Add(Skill.PlayerPerforate);
+                    break;
+                case "Fortify":
+                    unlockedSkill.Add(Skill.PlayerFortify);
+                    break;
+                case "SpikeTrap":
+                    unlockedSkill.Add(Skill.PlayerSpikeTrap);
+                    break;
+            }
         }
         return unlockedSkill;
     }

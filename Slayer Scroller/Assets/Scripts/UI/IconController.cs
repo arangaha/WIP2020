@@ -53,7 +53,7 @@ public class IconController : MonoBehaviour
             cooldownTimer.text = "" + (int)(cd);
         else
             cooldownTimer.text = "" +  cd.ToString("0.#");
-        if (RemainingCooldown > 0.1f)
+        if (RemainingCooldown > 0.01f)
             cooldownTimer.gameObject.SetActive(true);
         else
             cooldownTimer.gameObject.SetActive(false);

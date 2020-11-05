@@ -17,6 +17,8 @@ public class ProjectileControl : WeaponColliderController
     Vector3 lastPos;
     public UnityEvent OnHitEvent = new UnityEvent();//event for when projectile hits an enemy
     public OnHitHealEvent OnHitHeal = new OnHitHealEvent();
+    protected bool collideWithTerrain = true;
+    bool setup = false;
 
     // Start is called before the first frame update
     protected void Start()
@@ -53,7 +55,7 @@ public class ProjectileControl : WeaponColliderController
         heal = healOnHit;
         GetComponent<Rigidbody2D>().velocity = direction;
         transform.localEulerAngles = new Vector3(0, 0, rotation);
-
+        setup = true;
     }
 
     /// <summary>
@@ -74,6 +76,7 @@ public class ProjectileControl : WeaponColliderController
         GetComponent<Rigidbody2D>().velocity = direction;
         // transform.localEulerAngles = new Vector3(0, 0, rotation);
         transform.up = GetComponent<Rigidbody2D>().velocity;
+        setup = true;
     }
 
     /// <summary>
@@ -87,20 +90,21 @@ public class ProjectileControl : WeaponColliderController
 
     protected override void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag.Equals("Terrain"))
+        if (collision.tag.Equals("Terrain")&&collideWithTerrain)
         {
             OnHitEvent.RemoveAllListeners();
             OnHitHeal.RemoveAllListeners();
             Destroy(gameObject);
         }
-        else
-        {
+        else if(setup&& !collision.tag.Equals("Terrain"))
+        {   
             UnitController u = collision.transform.root.GetComponent<UnitController>();
             if (u.unitType != unitType && canDetect) 
             {
                 if (!hitList.Contains(u.gameObject))
                 {
                     onHit(u.gameObject);
+
                 }
                 OnHitHeal.RemoveAllListeners(); // heal can only trigger once per projectile
                 if (!piercing)
@@ -126,6 +130,22 @@ public class ProjectileControl : WeaponColliderController
         OnHitEvent.Invoke();
         OnHitHeal.Invoke(heal);
 
+    }
+
+    /// <summary>
+    /// causes projectile to not collide with wall until delay is over
+    /// </summary>
+    /// <param name="delay"></param>
+    public void DontCollideWithWalls(int delay)
+    {
+        collideWithTerrain = false;
+        StartCoroutine(CollideDelay(1));
+    }
+
+    IEnumerator CollideDelay(int time)
+    {
+        yield return new WaitForSeconds(time);
+        collideWithTerrain = true;
     }
 
 

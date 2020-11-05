@@ -18,14 +18,19 @@ public class DamageText : MonoBehaviour
     /// initialize the text
     /// </summary>
     /// <param name="number">positive if taking damage, negative if healing</param>
-    public void InitializeText(float number)
+    public void InitializeText(float number, bool bleed)
     {
         if (number != 0)
         {
             text = GetComponent<TextMeshProUGUI>();
 
-
-            if (number > 0)
+            if(bleed)
+            {
+                text.color = Color.red;
+                text.text = "" + (int)number;
+                text.fontSize = 18;
+            }
+            else if (number > 0)
             {
                 text.color = Color.white;
                 text.text = "" + (int)number;
@@ -35,6 +40,7 @@ public class DamageText : MonoBehaviour
             {
                 text.color = Color.green;
                 text.text = "" + (int)-number;
+                text.fontSize = 18;
                // Debug.Log("heal");
             }
             xforce = Random.Range(-2, 2);

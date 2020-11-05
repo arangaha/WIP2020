@@ -9,7 +9,7 @@ public class EliteWarriorStats : UnitStats
     public override void Init(int level)
     {
         Level = level;
-        maxHealth = 3000 + 1000 * (level - 1);
+        maxHealth = 600 * (level - 1);
         currentHealth = maxHealth;
         damageScaling = 0.1f;
     }

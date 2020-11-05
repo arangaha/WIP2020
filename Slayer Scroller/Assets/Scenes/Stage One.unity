@@ -769,19 +769,19 @@ MonoBehaviour:
   PlayerSpawnLocation: {fileID: 1901233927}
   spawnLocations:
   - {fileID: 269615755}
-  - {fileID: 598555543}
-  - {fileID: 543618526}
-  - {fileID: 1886843620}
-  - {fileID: 24372481}
   - {fileID: 853016939}
-  - {fileID: 681436030}
-  - {fileID: 1452321464}
-  - {fileID: 1481869357}
-  - {fileID: 645457113}
   - {fileID: 1111772982}
+  - {fileID: 598555543}
+  - {fileID: 681436030}
   - {fileID: 1236005402}
+  - {fileID: 543618526}
+  - {fileID: 1452321464}
   - {fileID: 598839918}
+  - {fileID: 1886843620}
+  - {fileID: 1481869357}
   - {fileID: 1264996486}
+  - {fileID: 24372481}
+  - {fileID: 645457113}
   - {fileID: 50999921}
   CameraUI: {fileID: 1942514580}
   remainingEnemies: {fileID: 1555605971}
@@ -1020,7 +1020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dc44af369b72d9478518bf99bbd4f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxMulti: 0.3
+  parallaxMulti: 0.5
   camera: {fileID: 0}
 --- !u!1 &328254715
 GameObject:
@@ -1198,7 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dc44af369b72d9478518bf99bbd4f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxMulti: 0.6
+  parallaxMulti: 0.7
   camera: {fileID: 0}
 --- !u!1 &500802896
 GameObject:
@@ -3241,7 +3241,7 @@ PrefabInstance:
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
@@ -3261,9 +3261,7 @@ PrefabInstance:
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
       propertyPath: m_text
-      value: 'E
-
-'
+      value: W
       objectReference: {fileID: 0}
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
@@ -4325,7 +4323,7 @@ PrefabInstance:
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
       propertyPath: m_text
-      value: 'F
+      value: 'R
 
 '
       objectReference: {fileID: 0}
@@ -9608,7 +9606,7 @@ PrefabInstance:
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
@@ -9628,7 +9626,14 @@ PrefabInstance:
     - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}
       propertyPath: m_text
-      value: R
+      value: 'E
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6676863948723004986, guid: 3c64df52c68e62a4cbf452c02ed7336e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6676863947767938134, guid: 3c64df52c68e62a4cbf452c02ed7336e,
         type: 3}

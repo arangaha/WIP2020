@@ -2555,6 +2555,9 @@ MonoBehaviour:
   ClosestAlly: {fileID: 0}
   ClosestEnemy: {fileID: 0}
   SkillCooldowns: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
   BodyParts: []
   transparency: 1
   HealthbarInstance: {fileID: 0}
@@ -2604,8 +2607,11 @@ MonoBehaviour:
   attack: 10
   armor: 0
   unitController: {fileID: 0}
+  protection: 1
   BleedAmount: 0
   BleedCounter: 4
+  extraBleedMulti: 0
+  extraBleedCounter: 8
   slowCounter: 0
   Level: 0
   ExposeCounter: 0
@@ -3179,7 +3185,7 @@ GameObject:
   - component: {fileID: 6868005079476171967}
   - component: {fileID: 794636923485458307}
   - component: {fileID: 4539201888355839589}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}

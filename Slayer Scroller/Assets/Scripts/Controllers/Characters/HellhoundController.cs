@@ -38,6 +38,9 @@ public class HellhoundController : EnemyController
         }
 
         FireballPrefab = Resources.Load("Prefabs/Projectiles/FireBall") as GameObject;
+
+        EffectXOffset = 1.3f;
+        EffectWidth = 2;
     }
 
 

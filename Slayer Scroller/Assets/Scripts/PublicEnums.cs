@@ -11,7 +11,7 @@ public enum UnitType
 
 public enum PlayerStaminaCost
 {
-    Dash = 35,
+    Dash = 25,
     Jump = 15,
     Sprint = 15, //per second
 }
@@ -72,7 +72,7 @@ public sealed class Skill
 
     public static Skill Default = new Skill("",Icon.Default,0,0,0,false,0,0,0,5);
     //player skills (leave range at 0)
-    public static Skill PlayerNormalAttack = new Skill("Normal Attack",Icon.NormalAttack,15, 0,0, false,0,0,0,5);
+    public static Skill PlayerNormalAttack = new Skill("Normal Attack",Icon.NormalAttack,20, 0,0, false,0,0,0,5);
     public static Skill PlayerNormalRangedAttack = new Skill("Normal Ranged Attack",Icon.RangedNormalAttack,10, 0, 0, false,0,0,0,0, 30, false);
     public static Skill PlayerRazorBlades = new Skill("Razor Blades",Icon.RazorBlades,12, 0, 4, false,10,0,0,0, 30, true); //fires 3 projectiles
   //  public static Skill PlayerRazorBlades = new Skill("Razor Blades", Icon.RazorBlades, 12, 0, 0, false, 0, 0, 0, 0, 30, true); //fires 3 projectiles
@@ -81,9 +81,11 @@ public sealed class Skill
     public static Skill PlayerCull = new Skill("Cull",Icon.Cull,100, 0, 12, false, 25, 0, 0, 0); //deals 1% more damage per 1% health missing on target   
     public static Skill PlayerRainOfBlades = new Skill("Rain Of Blades", Icon.RainOfBlades, 4, 0, 12, false, 20, 0, 0, 0, 12, false); //spawns a portal that spawns projetiles
     public static Skill PlayerBladeStorm = new Skill("BladeStorm", Icon.BladeStorm, 4, 0, 0, false, 15, 0, 0, 0);
-   
-     public static Skill PlayerChakram = new Skill("Chakram", Icon.Chakram, 40, 0, 12, false, 20, 0, 0, 0, 20, true);
-
+    public static Skill PlayerChakram = new Skill("Chakram", Icon.Chakram, 40, 0, 12, false, 20, 0, 0, 0, 20, true);
+    public static Skill PlayerPerforate = new Skill("Perforate", Icon.Perforate, 80, 0, 12, false, 15, 0, 0, 0);
+    public static Skill PlayerFortify = new Skill("Fortify", Icon.Fortify, 5, 8, 20, false, 0, 0, 0, 0);
+    public static Skill PlayerSpikeTrap = new Skill("Spike Trap", Icon.SpikeTrap, 40, 0, 15, false, 4, 0, 0, 0);
+    //public static Skill PlayerSpikeTrap = new Skill("Spike Trap", Icon.SpikeTrap, 25, 0, 0, false, 4, 0, 0, 0);
     //enemy skills
     public static Skill WarriorSwing = new Skill("Warrior Swing",Icon.Default,10, 10,10, false,0, 0, 0,0);
     public static Skill WarriorJab = new Skill("Warrior Jab", Icon.Default, 13, 7, 6, false,0, 0, 0,0);
@@ -102,7 +104,7 @@ public sealed class Skill
     public static Skill HellHoundNA = new Skill("Hellhound Normal Attack", Icon.Default, 7, 3, 0, false, 0, 0, 0, 0);
     public static Skill HellHoundFireball = new Skill("Hellhound Fireball", Icon.Default, 10, 12, 8, false, 0, 0, 0, 0, 15, false);
 
-    public static Skill HellHoundVariantNA = new Skill("Hellhound Elite Normal Attack", Icon.Default, 10, 4, 0, false, 0, 2, 0, 0);
+    public static Skill HellHoundVariantNA = new Skill("Hellhound Elite Normal Attack", Icon.Default, 10, 4, 0, false, 0, 1, 0, 0);
     public static Skill HellHoundVariantFireball = new Skill("Hellhound Elite Fireball", Icon.Default, 20, 12, 12, false, 0, 0, 0, 0,10,true);
   //  public static Skill HellHoundVariantSpikeShot = new Skill("Hellhound Elite Spike Shot", Icon.Default, 5, 8,25, false, 0, 1, 0, 0); //spikes come of body to hit, fades away and reappears back in body after
   //  public static Skill HellHoundVariantMortar = new Skill("Hellhound Elite Mortar", Icon.Default, 30, 15, 30, false, 0, 0, 0, 0); //lobs mortars that plants themselves on the floor, explodes after 5 seconds
@@ -233,6 +235,37 @@ public sealed class PlayerSkill
             SkillUpgrade.ChakramDamage
         });
 
+    public static PlayerSkill PlayerPerforate = new PlayerSkill(Skill.PlayerPerforate, Icon.Perforate,
+        new List<SkillUpgrade>
+        {
+            SkillUpgrade.PerforateArmor,
+            SkillUpgrade.PerforateBlades,
+            SkillUpgrade.PerforateCooldown,
+            SkillUpgrade.PerforateDamage,
+            SkillUpgrade.PerforateHeight,
+            SkillUpgrade.PerforateSlow,
+
+        });
+
+    public static PlayerSkill PlayerFortify = new PlayerSkill(Skill.PlayerFortify, Icon.Fortify,
+        new List<SkillUpgrade>
+        {
+            SkillUpgrade.FortifyCooldownOnNA,
+            SkillUpgrade.FortifyExtraArmor,
+            SkillUpgrade.FortifyProtection,
+            SkillUpgrade.FortifyEnergyGain,
+            SkillUpgrade.FortifyRemoveBleed,
+
+        });
+    public static PlayerSkill PlayerSpikeTrap = new PlayerSkill(Skill.PlayerSpikeTrap, Icon.SpikeTrap,
+        new List<SkillUpgrade>
+        {
+            SkillUpgrade.SpikeTrapSpikes,
+            SkillUpgrade.SpikeTrapCooldown,
+            SkillUpgrade.SpikeTrapMultipleTraps,
+            SkillUpgrade.SpikeTrapIncBleedDmg,
+            SkillUpgrade.SpikeTrapSlowDamage,
+        });
 }
 
 /// <summary>
@@ -368,7 +401,7 @@ public sealed class SkillUpgrade
     public static SkillUpgrade NormalAttackDamage = new SkillUpgrade(Skill.PlayerNormalAttack, "Normal Attacks deal +10 Damage", 10, 1, 1, 0, 0,0,5);
     public static SkillUpgrade NormalAttackBleed = new SkillUpgrade(Skill.PlayerNormalAttack, "Normal Attacks cause targets hit to Bleed for +1 damage for 4 seconds", 0, 1, 1, 1, 0,0,5);
     public static SkillUpgrade NormalAttackEnergyGain = new SkillUpgrade(Skill.PlayerNormalAttack, "Normal Attacks generate +2 Energy on hit", 0, 0, 0, 0, 0,0, 5);
-    public static SkillUpgrade NormalAttackArmor = new SkillUpgrade(Skill.PlayerNormalAttack, "Normal Attacks grant +2 armor if you have no armor", 2, 4);
+    public static SkillUpgrade NormalAttackArmor = new SkillUpgrade(Skill.PlayerNormalAttack, "Normal Attacks grant +4 armor if you have no armor", 4, 4);
     #endregion
 
     #region Normal Ranged Attack
@@ -437,13 +470,38 @@ public sealed class SkillUpgrade
     #endregion
 
     #region chakram
-    public static SkillUpgrade ChakramReturnDamage = new SkillUpgrade(Skill.PlayerChakram, "Enemies hit by Initial and Returning hit of Chakram take +30 damage and are Exposed for +1 hits", 30, 4); //returning damage + expose
+    public static SkillUpgrade ChakramReturnDamage = new SkillUpgrade(Skill.PlayerChakram, "Enemies hit by Initial and Returning hit of Chakram take +30 damage and are Exposed for +1 hits. (Exposed enemies take 20% more damage for X hits)", 30, 4); //returning damage + expose
     public static SkillUpgrade ChakramArmor = new SkillUpgrade(Skill.PlayerChakram, "Gain +1 armor per enemy hit by Initial and Returning hit when the Chakram returns to you", 1, 2);//armor per enemy hit
     public static SkillUpgrade ChakramSpeedCost = new SkillUpgrade(Skill.PlayerChakram, "Gain +20 projectile speed, -20% cost", 0, 1, 0.8f, 0, 0, 0, 3, 1.2f, true);//projectile speed , - cost
     public static SkillUpgrade ChakramCooldownLessDamage = new SkillUpgrade(Skill.PlayerChakram, "-25% cooldown, -5% damage to all damage dealt by this skill", 0, 0.75f, 1, 0, 0, 0, 4, 1, true);//reduced cooldown, reduced damage, implement reduced damage manually
     public static SkillUpgrade ChakramStationarySpin = new SkillUpgrade(Skill.PlayerChakram, "Chakram stays stationary for 0.5 second when it reaches its maximum range, dealing +30 damage to touching enemies every 0.1 second", 30, 4);//stationaryspin
     public static SkillUpgrade ChakramDamage = new SkillUpgrade(Skill.PlayerChakram, "Chakram deals +30 Damage", 30, 1, 1, 0, 0, 0, 3);
 
+    #endregion
+
+    #region Perforate
+    public static SkillUpgrade PerforateHeight = new SkillUpgrade(Skill.PlayerPerforate, "Blade has 2x Height, enemies hit by blade have their bleed refreshed", 0, 1);
+    public static SkillUpgrade PerforateBlades = new SkillUpgrade(Skill.PlayerPerforate, "for the next +1 seconds after using perforate, every 1 seconds lesser blades emerge under nearby enemies, dealing 30% of original damage", 1, 4);
+    public static SkillUpgrade PerforateArmor = new SkillUpgrade(Skill.PlayerPerforate, "Perforate deals 50% more to armored units, gain 1 armor per enemy hit", 1, 1);
+    public static SkillUpgrade PerforateCooldown = new SkillUpgrade(Skill.PlayerPerforate, "-50% cooldown when used above 45 energy", 0.5f, 2);
+    public static SkillUpgrade PerforateSlow = new SkillUpgrade(Skill.PlayerPerforate, "Perforate Slows for +2 Seconds", 2, 4);
+    public static SkillUpgrade PerforateDamage = new SkillUpgrade(Skill.PlayerPerforate, "Perforate Deals +60 Damage", 60, 1, 1, 0, 0, 0, 5);
+    #endregion
+
+    #region Fortify
+    public static SkillUpgrade FortifyProtection = new SkillUpgrade(Skill.PlayerFortify, "If you gained armor from at least one enemy, you take -20% damage the next hit you take.",0.2f,5);
+    public static SkillUpgrade FortifyExtraArmor = new SkillUpgrade(Skill.PlayerFortify, "If you gained armor from exactly one enemy, gain +5 armor",5, 3);
+    public static SkillUpgrade FortifyCooldownOnNA = new SkillUpgrade(Skill.PlayerFortify, "Normal Melee Attacks reduce the cooldown of this skill by 1 second if it hits an enemy", 1, 3);
+    public static SkillUpgrade FortifyEnergyGain = new SkillUpgrade(Skill.PlayerFortify, "Gain 1 Energy per nearby enemy when used", 1, 3);
+    public static SkillUpgrade FortifyRemoveBleed = new SkillUpgrade(Skill.PlayerFortify, "Remove bleeding effects on you when used. If you are below 50% health, you will not be slowed", 0, 1);
+    #endregion
+
+    #region SpikeTrap
+    public static SkillUpgrade SpikeTrapIncBleedDmg = new SkillUpgrade(Skill.PlayerSpikeTrap, "Enemies hit by trap takes +10% more bleed damage for 8 seconds", 0.1f, 5);//enemies hit take more bleed damage for 6 seconds
+    public static SkillUpgrade SpikeTrapCooldown = new SkillUpgrade(Skill.PlayerSpikeTrap, "-50% cooldown, +4 Energy Cost", 0, 0.5f, 2, 0, 0, 0, 2);//+energy cost, - cd
+    public static SkillUpgrade SpikeTrapMultipleTraps = new SkillUpgrade(Skill.PlayerSpikeTrap, "Throws 1 additional trap, exposes -2 hits", 1, 2);//throw multiple traps, + energy cost
+    public static SkillUpgrade SpikeTrapSlowDamage = new SkillUpgrade(Skill.PlayerSpikeTrap, "Trap deals +30% more damage to slowed enemies", 0.3f, 5); //if enemy hit is already slowed, they take more damage from the trap
+    public static SkillUpgrade SpikeTrapSpikes = new SkillUpgrade(Skill.PlayerSpikeTrap, "When triggered, +3 piercing spike projectiles are released in random directions, each dealing 5 damage", 3, 3);
     #endregion
 }
 
@@ -458,7 +516,7 @@ public sealed class Icon
     }
 
     public static Icon Default = new Icon("Default","");
-    public static Icon NormalAttack = new Icon("NormalAttack","Perform a melee attack in front of you, dealing 15 Damage");
+    public static Icon NormalAttack = new Icon("NormalAttack","Perform a melee attack in front of you, dealing 20 Damage");
     public static Icon RangedNormalAttack = new Icon("RangedNormalAttack", "Throw a blade forward 10 Damage");
     public static Icon RazorBlades = new Icon("RazorBlades", "Throw 3 blades forward, each dealing 12 Damage");
     public static Icon Puncture = new Icon("Puncture", "Perform a melee attack in front of you, dealing 20 Damage, and causing the target to bleed for 5 Damage for 4 seconds");
@@ -467,4 +525,7 @@ public sealed class Icon
     public static Icon RainOfBlades = new Icon("RainOfBlades", "Summon a portal that lasts 3 seconds which rains blades on target location of your mouse, dealing 4 Damage per blade. 6 blades are spawned per second");
     public static Icon BladeStorm = new Icon("BladeStorm", "Create 3 spinning blades around you for 6 seconds which strikes enemies it passes through for 4 Damage. Each blade can hit once per spin");
     public static Icon Chakram = new Icon("Chakram", "Throw a Chakram that returns to you, dealing 40 Damage initially and on the way back");
+    public static Icon Perforate = new Icon("Perforate", "Stab into the ground, causing blades to emerge under nearby enemies, dealing 80 Damage");
+    public static Icon Fortify = new Icon("Fortify","Gain 5 armor per nearby enemy. You are slowed for 2 seconds after use");
+    public static Icon SpikeTrap = new Icon("SpikeTrap", "Deploy a spike trap towards your cursor. When triggered by an enemy, they take 40 Damage. They are then Exposed for 4 hits, and are Slowed for 6 seconds. (Exposed enemies take 20% more damage for X hits)");
 }

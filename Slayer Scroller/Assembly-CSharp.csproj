@@ -81,10 +81,14 @@
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorBarrier.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorSpikesControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorStormCallControl.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\ExposeEffect.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\FortifyControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\MegaBeamControl.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\PerforateControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\ProjectileControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\RainOfBladesControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\SlamSpikesControl.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\SpikeTrapControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\TargetDetection.cs" />
     <Compile Include="Assets\Scripts\Controllers\WeaponColliderController.cs" />
     <Compile Include="Assets\Scripts\Progress\GlobalVariables.cs" />

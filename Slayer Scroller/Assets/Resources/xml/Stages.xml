@@ -4,79 +4,98 @@
 		<StageArea>1</StageArea>
 		<Warriors>1</Warriors>
 		<Hounds>0</Hounds>
-		<UpgradeRewards>1</UpgradeRewards>
+		<UnlockedSkills>
+			<UnlockedSkill>RazorBlades</UnlockedSkill>
+
+		</UnlockedSkills>
+		<UpgradeRewards>2</UpgradeRewards>
 	</Stage>
 		<Stage>
 		<StageNumber>2</StageNumber>
 		<StageArea>1</StageArea>
 		<Warriors>1</Warriors>
 		<Bats>1</Bats>
-		<UpgradeRewards>1</UpgradeRewards>
-		<UnlockedSkill>RazorBlades</UnlockedSkill>
+				<UnlockedSkills>
+					<UnlockedSkill>Puncture</UnlockedSkill>
+			<UnlockedSkill>Slash</UnlockedSkill>
+		</UnlockedSkills>
+		<UpgradeRewards>3</UpgradeRewards>
+
 	</Stage>
 		<Stage>
 		<StageNumber>3</StageNumber>
 		<StageArea>1</StageArea>
 		<Hounds>1</Hounds>
-		<UpgradeRewards>2</UpgradeRewards>
-		
-		<UnlockedSkill>Puncture</UnlockedSkill>
+		<UnlockedSkills>					
+			<UnlockedSkill>RainOfBlades</UnlockedSkill>
+			
+			<UnlockedSkill>Fortify</UnlockedSkill>
+		</UnlockedSkills>
+		<UpgradeRewards>3</UpgradeRewards>
+
 	</Stage>
 	<Stage>
 		<StageNumber>4</StageNumber>
 		<StageArea>1</StageArea>
 		<Warriors>1</Warriors>
 		<Hounds>1</Hounds>
-		<UpgradeRewards>2</UpgradeRewards>
-		
-		<UnlockedSkill>Slash</UnlockedSkill>
+				<UnlockedSkills>		
+			
+			<UnlockedSkill>Perforate</UnlockedSkill>
+						<UnlockedSkill>SpikeTrap</UnlockedSkill>
+		</UnlockedSkills>	
+		<UpgradeRewards>3</UpgradeRewards>
+
 	</Stage>
 		<Stage>
 		<StageNumber>5</StageNumber>
 		<StageArea>1</StageArea>
 				<EliteHounds>1</EliteHounds>
-		<UpgradeRewards>2</UpgradeRewards>
+		<UpgradeRewards>4</UpgradeRewards>
+	
 		
-		<UnlockedSkill>RainOfBlades</UnlockedSkill>
 	</Stage>
 	<Stage>
 		<StageNumber>6</StageNumber>
 		<Warriors>1</Warriors>
 		<Bats>1</Bats>
 		<Hounds>1</Hounds>
-		<UpgradeRewards>2</UpgradeRewards>
-		<UnlockedSkill>Chakram</UnlockedSkill>
+		<UpgradeRewards>3</UpgradeRewards>
+		<UnlockedSkills>		
 
+				<UnlockedSkill>Chakram</UnlockedSkill>
+			<UnlockedSkill>Cull</UnlockedSkill>
+		</UnlockedSkills>
 	</Stage>
 		<Stage>
 		<StageNumber>7</StageNumber>
 		<StageArea>1</StageArea>
 		<Warriors>3</Warriors>
 		<Bats>2</Bats>
-		<UpgradeRewards>2</UpgradeRewards>
-		
-		<UnlockedSkill>Cull</UnlockedSkill>
+		<UpgradeRewards>3</UpgradeRewards>
+		<UnlockedSkills>		
+			<UnlockedSkill>Bladestorm</UnlockedSkill>
+		</UnlockedSkills>
 	</Stage>
 	<Stage>
 		<StageNumber>8</StageNumber>
 		<StageArea>1</StageArea>
 		<Warriors>2</Warriors>
 		<Hounds>1</Hounds>
-		<UpgradeRewards>3</UpgradeRewards>
-		<UnlockedSkill>Bladestorm</UnlockedSkill>
+		<UpgradeRewards>4</UpgradeRewards>	
 	</Stage>
 	<Stage>
 		<StageNumber>9</StageNumber>
 		<StageArea>1</StageArea>
 		<Hounds>3</Hounds>
-		<UpgradeRewards>3</UpgradeRewards>
+		<UpgradeRewards>4</UpgradeRewards>
 		
 	</Stage>
 	<Stage>
 		<StageNumber>10</StageNumber>
 		<StageArea>1</StageArea>
 		<EliteWarriors>1</EliteWarriors>
-		<UpgradeRewards>3</UpgradeRewards>
+		<UpgradeRewards>5</UpgradeRewards>
 		
 	</Stage>
 </Stages>

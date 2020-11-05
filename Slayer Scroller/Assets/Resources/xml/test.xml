@@ -2,7 +2,7 @@
 	<Stage>
 		<StageNumber>1</StageNumber>
 		<StageArea>1</StageArea>
-		<EliteWarriors>1</EliteWarriors>
+				<Warriors>2</Warriors>
 		<UpgradeRewards>1</UpgradeRewards>
 	</Stage>
 

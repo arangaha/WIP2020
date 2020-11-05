@@ -14,6 +14,7 @@ public class MainCharacterController : UnitController
     [SerializeField] bool canQueueDashAttack = false; //checker to see if user can queue for a dash attack
     [SerializeField] bool isDashAttacking = false;
     [SerializeField] bool isDashFalling = false; //checker to see if unit is falling after a dash
+    [SerializeField] bool isSlashing = false; //whether player is using slash
 
     [SerializeField] bool isPerformingMovementSkill = false;
 
@@ -21,6 +22,7 @@ public class MainCharacterController : UnitController
     [SerializeField] int NormalAttackRotation = 1; // which normal attack the character is currently on
     [SerializeField] int NormalRangedAttackRotation = 1; // which normal ranged attack the character is currently on
 
+    [SerializeField] Vector2  slashSpeed;
     [SerializeField] float dashSpeed = 25f;
     [SerializeField] float JumpForce = 15f;
     [SerializeField] bool sprinting = false;
@@ -31,6 +33,7 @@ public class MainCharacterController : UnitController
     [SerializeField] private GameObject FrontHand;
     [SerializeField] private GameObject BackHand;
     [SerializeField] private GameObject FrontBlade;
+    TargetDetection targetDetect;
 
     [SerializeField] private GroundColliderController GroundCollider;
     private MainCharacterUpperAnimationController UpperBodyAnimationStateController;
@@ -49,6 +52,9 @@ public class MainCharacterController : UnitController
     private GameObject RainOfBladesPrefab;
     private GameObject BladeStormPrefab;
     private GameObject ChakramPrefab;
+    private GameObject PerforatePrefab;
+    private GameObject FortifyPrefab;
+    private GameObject SpikeTrapPrefab;
     #endregion
 
     #region BladeStorm autocast info
@@ -56,6 +62,14 @@ public class MainCharacterController : UnitController
     TempPlayerSkill BladestormInstance;
     #endregion
 
+    #region perforate blades info
+    TempPlayerSkill perforatePrefab;
+    #endregion
+
+    #region NA info
+    bool NAHitOnce = false; // checker for if NA already hit once in the current attack
+    int NAFortifyCooldownReduction = 0;
+    #endregion
 
     UIController uicontroller;
     #region player skills
@@ -73,6 +87,10 @@ public class MainCharacterController : UnitController
         MainStatController = GetComponent<MainCharacterStats>();
         MainStatController.onHealthLost.AddListener(OnHealthLost);
         unitType = UnitType.Ally;
+        targetDetect = transform.Find("TargetDetection").GetComponent<TargetDetection>();
+        targetDetect.ChangeUnitType(UnitType.Ally);
+        targetDetect.onUpdateAllies.AddListener(updateNearbyAllies);
+        targetDetect.onUpdateEnemies.AddListener(updateNearbyEnemies);
         BasewalkSpeed = walkSpeed = 8;
         dashSpeed = 20;
         JumpForce = 1000;
@@ -94,6 +112,7 @@ public class MainCharacterController : UnitController
         UpperBodyAnimationStateController.WeaponDetectionOffBack.AddListener(TurnDetectionOffBackBlade);
         UpperBodyAnimationStateController.onSlashFinish.AddListener(FinishSlash);
         UpperBodyAnimationStateController.onCullEffect.AddListener(CreateCull);
+        UpperBodyAnimationStateController.onPerforate.AddListener(CreatePerforateBlades);
 
         LowerBodyAnimationStateController = LowerBody.GetComponent<MainCharacterLowerAnimationController>();
         LowerBodyAnimationStateController.onDashFinish.AddListener(FinishDash);
@@ -113,6 +132,9 @@ public class MainCharacterController : UnitController
         CullEffectPrefab = Resources.Load("Prefabs/AoE/CullEffect") as GameObject;
         RainOfBladesPrefab = Resources.Load("Prefabs/SkillObjects/RainOfBlades") as GameObject;
         BladeStormPrefab = Resources.Load("Prefabs/SkillObjects/BladeStorm") as GameObject;
+        PerforatePrefab = Resources.Load("Prefabs/AoE/Perforate") as GameObject;
+        FortifyPrefab = Resources.Load("Prefabs/Effects/FortifyEffect") as GameObject;
+        SpikeTrapPrefab = Resources.Load("Prefabs/AoE/SpikeTrap") as GameObject;
 
     }
 
@@ -146,14 +168,28 @@ public class MainCharacterController : UnitController
         uicontroller.UpdateCooldown(3, 0);
         uicontroller.UpdateCooldown(4, 0);
         //manual unlocks and upgrades
-       // LearnSkill(Skill.PlayerRazorBlades);
+        // LearnSkill(Skill.PlayerRazorBlades);
         //LearnSkill(Skill.PlayerPuncture);
-        //LearnSkill(Skill.PlayerSlash);
+        //  LearnSkill(Skill.PlayerSlash);
         //LearnSkill(Skill.PlayerCull);
         // // LearnSkill(Skill.PlayerRainOfBlades);
         //LearnSkill(Skill.PlayerBladeStorm);
         //  LearnSkill(Skill.PlayerChakram);
-
+        //   LearnSkill(Skill.PlayerPerforate);
+        //LearnSkill(Skill.PlayerFortify);
+        //LearnSkill(Skill.PlayerSpikeTrap);
+        // UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapMultipleTraps);
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapSlowDamage);
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapIncBleedDmg);
+        
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapMultipleTraps);
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapSpikes);
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapSpikes);
+        //UpgradeSkill(Skill.PlayerSpikeTrap, SkillUpgrade.SpikeTrapSpikes);
+        //UpgradeSkill(Skill.PlayerFortify, SkillUpgrade.FortifyProtection);
+        //UpgradeSkill(Skill.PlayerPerforate, SkillUpgrade.PerforateHeight);
+        //UpgradeSkill(Skill.PlayerPerforate, SkillUpgrade.PerforateBlades);
+        //UpgradeSkill(Skill.PlayerPerforate, SkillUpgrade.PerforateSlow);
         // UpgradeSkill(Skill.PlayerBladeStorm, SkillUpgrade.BladeStormCost);
         // UpgradeSkill(Skill.PlayerBladeStorm, SkillUpgrade.BladeStormCost);
         // UpgradeSkill(Skill.PlayerBladeStorm, SkillUpgrade.BladeStormCost);
@@ -178,7 +214,7 @@ public class MainCharacterController : UnitController
             {
                 if (WalkLeft || WalkRight)
                     Walk();
-                else
+                else if(!isAttacking && !sprinting && !isDashing)
                     SetIdle();
             }
             else if (isJumpingUp)
@@ -206,17 +242,17 @@ public class MainCharacterController : UnitController
             {
                 UseSkillInSlot(0);
             }
-            else if (Input.GetKeyDown("e"))
+            else if (Input.GetKeyDown("w"))
             {
                 UseSkillInSlot(1);
             }
 
-            else if (Input.GetKeyDown("r"))
+            else if (Input.GetKeyDown("e"))
             {
                 UseSkillInSlot(2);
             }
 
-            else if (Input.GetKeyDown("f"))
+            else if (Input.GetKeyDown("r"))
             {
                 UseSkillInSlot(3);
             }
@@ -278,10 +314,14 @@ public class MainCharacterController : UnitController
             sprintAgain = false;
         }
 
-        if (!isPerformingMovementSkill)
-        {
+     //   if (!isPerformingMovementSkill)
+     //   {
             //changes character velocity/position based on states
-            if (isDashing)
+            if(isSlashing)
+            {
+                rigidbody.velocity = slashSpeed;
+            }
+            else if (isDashing)
             {
                 if (!facingRight)
                     rigidbody.velocity = new Vector2(-dashSpeed, 0);
@@ -337,7 +377,7 @@ public class MainCharacterController : UnitController
             {
                 rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
             }
-        }
+        //}
 
         if (rigidbody.velocity.y < 0 && !Grounded)
         {
@@ -409,6 +449,7 @@ public class MainCharacterController : UnitController
             currentUpgradedSkill = Skills[currentSkill];
             inAction = true;
             isAttacking = true;
+            NAHitOnce = false;
             if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
             {
                 facingRight = true;
@@ -572,6 +613,20 @@ public class MainCharacterController : UnitController
     }
     #endregion
 
+    #region spike trap
+    void SpikeTrap()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerSpikeTrap].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSpikeTrap)] <= 0)
+        {
+            currentSkill = Skill.PlayerSpikeTrap;
+            currentUpgradedSkill = Skills[currentSkill];
+            currentProjectilePrefab = SpikeTrapPrefab;
+            DefaultRangedAttack();
+            MainStatController.SpendEnergy(Skills[Skill.PlayerSpikeTrap].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSpikeTrap)] = Skills[Skill.PlayerSpikeTrap].Cooldown;
+        }
+    }
+    #endregion
     #region Puncture
     void Puncture()
     {
@@ -624,17 +679,21 @@ public class MainCharacterController : UnitController
             currentUpgradedSkill = Skills[currentSkill];
             inAction = true;
             isAttacking = true;
+            isSlashing = true;
+            isDashing = false;
             isPerformingMovementSkill = true;
-            UpperBody.GetComponent<Animator>().Play("Slash");
-            LowerBody.GetComponent<Animator>().Play("SlashLower");
             MainStatController.SpendEnergy(Skills[Skill.PlayerSlash].EnergyCost);
             SkillCooldowns[SkillPool.IndexOf(Skill.PlayerSlash)] = Skills[Skill.PlayerSlash].Cooldown;
+  
             float dashDistanceMultiplier = 1 + SkillUpgrade.SlashDistance.SpecialAmount * (currentUpgradedSkill.Upgrades[SkillUpgrade.SlashDistance]);
+            
             if (!facingRight)
-                rigidbody.velocity = new Vector2(-dashSpeed * 1.3f*dashDistanceMultiplier, 0);
+                slashSpeed =  new Vector2(-dashSpeed * 1.3f*dashDistanceMultiplier, 0);
             else
-                rigidbody.velocity = new Vector2(dashSpeed * 1.3f * dashDistanceMultiplier, 0);
+                slashSpeed  = new Vector2(dashSpeed * 1.3f * dashDistanceMultiplier, 0);
 
+            UpperBody.GetComponent<Animator>().Play("Slash");
+            LowerBody.GetComponent<Animator>().Play("SlashLower");
             float armorGained = currentUpgradedSkill.Upgrades[SkillUpgrade.SlashGainArmor]*SkillUpgrade.SlashGainArmor.SpecialAmount;
             MainStatController.GainArmor(armorGained);
 
@@ -646,6 +705,8 @@ public class MainCharacterController : UnitController
         isAttacking = false;
         isPerformingMovementSkill = false;
         inAction = false;
+        isDashing = false;
+        isSlashing = false;
         if (!Grounded)
         {
             if (!facingRight)
@@ -696,6 +757,157 @@ public class MainCharacterController : UnitController
     }
     #endregion
 
+    #region Perforate
+    void Perforate()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerPerforate].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerPerforate)] <= 0)
+        {
+            if (Camera.main.ScreenToViewportPoint(Input.mousePosition).x > 0.5f)
+            {
+                facingRight = true;
+                FlipCharacter(true);
+            }
+            else
+            {
+                facingRight = false;
+                FlipCharacter(false);
+            }
+            if ((WalkLeft || WalkRight) && Grounded)
+                Walk();
+            currentSkill = Skill.PlayerPerforate;
+            currentUpgradedSkill = Skills[currentSkill];
+            inAction = true;
+            isAttacking = true;
+            UpperBody.GetComponent<Animator>().Play("Perforate");
+            LowerBody.GetComponent<Animator>().Play("Perforate");
+            MainStatController.SpendEnergy(Skills[Skill.PlayerPerforate].EnergyCost);
+
+            var cooldownReduction = currentUpgradedSkill.Upgrades[SkillUpgrade.PerforateCooldown] * SkillUpgrade.PerforateCooldown.SpecialAmount; ;
+            if(statController.CurrentEnergy()<30)
+            {
+                cooldownReduction = 0;
+            }
+
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerPerforate)] = Skills[Skill.PlayerPerforate].Cooldown*(1-cooldownReduction);
+            if(!Grounded)
+            rigidbody.AddForce(new Vector2(0, -1000));
+        }
+    }
+
+    void CreatePerforateBlades()
+    {
+        List<GameObject> EnemiesInRange = new List<GameObject>();
+        foreach (GameObject g in NearbyEnemies)
+        {
+            if (getUnitDistance(g) <= 12)
+                EnemiesInRange.Add(g);
+        }
+        foreach (GameObject g in EnemiesInRange)
+        {
+            perforatePrefab = currentUpgradedSkill;
+            CreatePerforateBlade(g, 1, 1);
+        }
+
+        var followBlades = currentUpgradedSkill.Upgrades[SkillUpgrade.PerforateBlades] * SkillUpgrade.PerforateBlades.SpecialAmount;
+
+        if (followBlades > 0)
+            StartCoroutine(PerforateFollowBlades(followBlades));
+
+    }
+
+    IEnumerator PerforateFollowBlades(float duration)
+    {
+        int counter = 0;
+        while(counter<duration)
+        {
+            yield return new WaitForSeconds(1);
+            List<GameObject> EnemiesInRange = new List<GameObject>();
+            foreach (GameObject g in NearbyEnemies)
+            {
+                if (getUnitDistance(g) <= 12)
+                    EnemiesInRange.Add(g);
+            }
+            foreach (GameObject g in EnemiesInRange)
+            {
+                CreatePerforateBlade(g, 0.3f, 0.6f);
+            }
+            counter += 1;
+        }
+    }
+
+    /// <summary>
+    /// spawn a perforate blade at position with specific damage scaling
+    /// </summary>
+    /// <param name="pos"></param>
+    void CreatePerforateBlade(GameObject target, float DamageScaling, float Scale)
+    {
+        var instance = Instantiate(PerforatePrefab);
+        instance.transform.position = new Vector3(target.transform.position.x, -1 + (Scale*3-3));
+        instance.transform.localScale = new Vector3(Scale, Scale, Scale);
+        instance.GetComponent<AreaEffectControl>().setUnitType(unitType);
+        instance.GetComponent<AreaEffectControl>().SetUp(perforatePrefab.Amount*DamageScaling, 0, perforatePrefab.Bleed*(int)DamageScaling, perforatePrefab.HealthOnHit, gameObject);
+        instance.GetComponent<AreaEffectControl>().OnHitHeal.AddListener(Heal);
+
+        var armorGain = perforatePrefab.Upgrades[SkillUpgrade.PerforateArmor] * SkillUpgrade.PerforateArmor.SpecialAmount;
+        var bleed = perforatePrefab.Upgrades[SkillUpgrade.PerforateHeight] > 0 ? true : false;
+        var slow = perforatePrefab.Upgrades[SkillUpgrade.PerforateSlow] * SkillUpgrade.PerforateSlow.SpecialAmount;
+        var bladesDuration = perforatePrefab.Upgrades[SkillUpgrade.PerforateBlades] * SkillUpgrade.PerforateBlades.SpecialAmount;
+
+        if (bleed)
+            instance.transform.localScale = new Vector3(1*Scale, 2* Scale, 1* Scale);
+        instance.GetComponent<PerforateControl>().UpdradesSetup((int)armorGain, bleed);
+        instance.GetComponent<PerforateControl>().SetExclusiveTarget(target);//blade can only hit the enemy it spawned on to prevent overlapping shotgun
+        instance.GetComponent<PerforateControl>().AddSlow((int)slow);
+    }
+    #endregion
+
+    #region Fortify
+    void Fortify()
+    {
+        if (EnergyCanUse(Skills[Skill.PlayerFortify].EnergyCost) && SkillCooldowns[SkillPool.IndexOf(Skill.PlayerFortify)] <= 0)
+        {
+
+            currentSkill = Skill.PlayerFortify;
+            currentUpgradedSkill = Skills[currentSkill];
+
+            var instance = Instantiate(FortifyPrefab,transform);
+            instance.transform.localScale /= xScale;
+            MainStatController.SpendEnergy(Skills[Skill.PlayerFortify].EnergyCost);
+            SkillCooldowns[SkillPool.IndexOf(Skill.PlayerFortify)] = Skills[Skill.PlayerFortify].Cooldown;
+
+            var protection = 1-currentUpgradedSkill.Upgrades[SkillUpgrade.FortifyProtection] * SkillUpgrade.FortifyProtection.SpecialAmount;
+            var singleEnemyExtraArmor = currentUpgradedSkill.Upgrades[SkillUpgrade.FortifyExtraArmor] * SkillUpgrade.FortifyExtraArmor.SpecialAmount;
+            var energyGain = currentUpgradedSkill.Upgrades[SkillUpgrade.FortifyEnergyGain] * SkillUpgrade.FortifyEnergyGain.SpecialAmount;
+            bool bleedRemoval = currentUpgradedSkill.Upgrades[SkillUpgrade.FortifyRemoveBleed]>0?true:false;
+            if(bleedRemoval)
+            {
+                statController.RemoveBleed();
+            }
+            List<GameObject> EnemiesInRange = new List<GameObject>();
+            foreach (GameObject g in NearbyEnemies)
+            {
+                if (getUnitDistance(g) <= currentUpgradedSkill.Range)
+                    EnemiesInRange.Add(g);
+            }
+            foreach (GameObject g in EnemiesInRange)
+            {
+                statController.GainArmor(currentUpgradedSkill.Amount);
+                statController.GainEnergy(energyGain);
+            }
+            if(EnemiesInRange.Count>0)
+            {
+                statController.Protect(protection);
+            }
+            if(EnemiesInRange.Count==1)
+            {
+                statController.GainArmor(singleEnemyExtraArmor);
+            }
+            if(!(bleedRemoval&&statController.CurrentHealth()/statController.MaxHealth()<0.5f))
+            statController.Slow(2);
+        }
+    }
+    #endregion
+
     #region Rain Of Blades
     void RainOfBlades()
     {
@@ -704,9 +916,10 @@ public class MainCharacterController : UnitController
             currentSkill = Skill.PlayerRainOfBlades;
             currentUpgradedSkill = Skills[currentSkill];
             RoBLocation = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, transform.position.y + 6);
-            DefaultSpellAttack();
+       
             MainStatController.SpendEnergy(Skills[Skill.PlayerRainOfBlades].EnergyCost);
             SkillCooldowns[SkillPool.IndexOf(Skill.PlayerRainOfBlades)] = Skills[Skill.PlayerRainOfBlades].Cooldown;
+            DefaultSpellAttack();
 
         }
     }
@@ -783,6 +996,7 @@ public class MainCharacterController : UnitController
             instance.GetComponent<CullEffectControl>().UpgradesSetup(0, (int)armor,slowMulti,BleedConsume);
             instance.transform.localScale *= 1 + 1 * (AoE);
         }
+
         }
 
 
@@ -951,9 +1165,48 @@ public class MainCharacterController : UnitController
                 ThrowProjectile(currentProjectilePrefab, startingLocation, dir, 95);
             }
         }
-        else if(currentProjectilePrefab = ChakramPrefab)
+        else if(currentProjectilePrefab == ChakramPrefab)
         {
             ThrowProjectile(currentProjectilePrefab, startingLocation);
+        }
+        else if(currentProjectilePrefab == SpikeTrapPrefab)
+        {
+            float projSpeed;
+            if (facingRight)
+            {
+                projSpeed = 400;
+                
+            }
+            else
+            {
+                projSpeed = -400;
+
+            }
+
+            var traps = currentUpgradedSkill.Upgrades[SkillUpgrade.SpikeTrapMultipleTraps];
+            for (int i = 0; i <= traps; i++)
+            {
+
+
+                var instance = Instantiate(currentProjectilePrefab);
+
+                instance.transform.position = startingLocation;
+                instance.GetComponent<SpikeTrapControl>().setUnitType(unitType);
+                instance.GetComponent<Rigidbody2D>().AddForce(new Vector2(projSpeed, 10));
+                instance.GetComponent<SpikeTrapControl>().SetUp(currentUpgradedSkill.Amount, 0, currentUpgradedSkill.Bleed, currentUpgradedSkill.HealthOnHit, gameObject);
+                instance.GetComponent<SpikeTrapControl>().AddSlow(6);
+
+                var spikes = currentUpgradedSkill.Upgrades[SkillUpgrade.SpikeTrapSpikes] * (int)SkillUpgrade.SpikeTrapSpikes.SpecialAmount;
+                var bleedDmg = currentUpgradedSkill.Upgrades[SkillUpgrade.SpikeTrapIncBleedDmg] * SkillUpgrade.SpikeTrapIncBleedDmg.SpecialAmount;
+                var slowDmg = currentUpgradedSkill.Upgrades[SkillUpgrade.SpikeTrapSlowDamage] * SkillUpgrade.SpikeTrapSlowDamage.SpecialAmount;
+
+                instance.GetComponent<SpikeTrapControl>().Init(slowDmg,bleedDmg,spikes, 4 - (traps * 2));
+
+                if (facingRight)
+                    projSpeed += 200;
+                else
+                    projSpeed -= 200;
+            }
         }
         else
             ThrowProjectile(currentProjectilePrefab, startingLocation);
@@ -1020,7 +1273,9 @@ public class MainCharacterController : UnitController
         {
             isJumpingUp = true;
             rigidbody.AddForce(new Vector2(0, JumpForce));
+
             MainStatController.SpendStamina((float)PlayerStaminaCost.Jump);
+
         }
     }
 
@@ -1029,8 +1284,9 @@ public class MainCharacterController : UnitController
     /// </summary>
     void Jump()
     {
-
-            LowerBody.GetComponent<Animator>().Play("JumpUpwardsLower"); //play upwards animation
+        if (!inAction && !isAttacking)
+            UpperBody.GetComponent<Animator>().Play("IdleUpper");
+        LowerBody.GetComponent<Animator>().Play("JumpUpwardsLower"); //play upwards animation
 
     }
 
@@ -1187,6 +1443,8 @@ public class MainCharacterController : UnitController
     {
         inAction = false;
         isAttacking = false;
+        isDashing = false;
+        isSlashing = false;
         isNormalAttacking = false;
         isJumpingUp = false;
         queueDashAttack = false;
@@ -1199,6 +1457,8 @@ public class MainCharacterController : UnitController
     protected override void StopAttacking()
     {
         isAttacking = false;
+        isDashing = false;
+        isSlashing = false;
         inAction = false;
         currentSkill = Skill.Default;
 
@@ -1330,6 +1590,17 @@ public class MainCharacterController : UnitController
             {
                 statController.GainArmor(armorUpgrades * SkillUpgrade.NormalAttackArmor.SpecialAmount);
             }
+            //if this NA havent hit anyone yet (trigger one time effects)
+            if(!NAHitOnce)
+            {
+                if(SlottedSkills.Contains(Skill.PlayerFortify))
+                {
+                    SkillCooldowns[SkillPool.IndexOf(Skill.PlayerFortify)] -= NAFortifyCooldownReduction;
+                }
+
+
+            }
+            NAHitOnce = true;
         }
         MainStatController.DealDamage(target, currentAmount);
         MainStatController.Heal(currentUpgradedSkill.HealthOnHit);
@@ -1347,6 +1618,9 @@ public class MainCharacterController : UnitController
 
     void UseSkillInSlot(int index)
     {
+
+        isDashing = false;
+        isSlashing = false;
         Skill skillInSlot = SlottedSkills[index];
 
         if (skillInSlot == Skill.PlayerRazorBlades)
@@ -1363,6 +1637,12 @@ public class MainCharacterController : UnitController
             BladeStorm();
         else if (skillInSlot == Skill.PlayerChakram)
             Chakram();
+        else if (skillInSlot == Skill.PlayerPerforate)
+            Perforate();
+        else if (skillInSlot == Skill.PlayerFortify)
+            Fortify();
+        else if (skillInSlot == Skill.PlayerSpikeTrap)
+            SpikeTrap();
     }
     #endregion
     #region player skill upgrades
@@ -1410,6 +1690,18 @@ public class MainCharacterController : UnitController
         else if (s == Skill.PlayerChakram)
         {
             Skills.Add(Skill.PlayerChakram, new TempPlayerSkill(PlayerSkill.PlayerChakram));
+        }
+        else if (s == Skill.PlayerPerforate)
+        {
+            Skills.Add(Skill.PlayerPerforate, new TempPlayerSkill(PlayerSkill.PlayerPerforate));
+        }
+        else if (s == Skill.PlayerFortify)
+        {
+            Skills.Add(Skill.PlayerFortify, new TempPlayerSkill(PlayerSkill.PlayerFortify));
+        }
+        else if(s== Skill.PlayerSpikeTrap)
+        {
+            Skills.Add(Skill.PlayerSpikeTrap, new TempPlayerSkill(PlayerSkill.PlayerSpikeTrap));
         }
         if (!(s.Equals(Skill.PlayerNormalAttack)) && !(s.Equals(Skill.PlayerNormalRangedAttack)))
         {
@@ -1518,6 +1810,10 @@ public class MainCharacterController : UnitController
             {
                 BladestormInstance = Skills[s];
             }
+        }
+        else if(s.Equals(Skill.PlayerFortify))
+        {
+            NAFortifyCooldownReduction = Skills[s].Upgrades[SkillUpgrade.FortifyCooldownOnNA] * (int)SkillUpgrade.FortifyCooldownOnNA.SpecialAmount;
         }
         //need to add update icon as well
         uicontroller.InitIcon(SlottedSkills.IndexOf(s)+1, s.Icon.IconName, Skills[s].EnergyCost, (int)Skills[s].Cooldown);

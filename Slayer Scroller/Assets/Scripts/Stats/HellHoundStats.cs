@@ -7,6 +7,8 @@ public class HellHoundStats : UnitStats
 
     public override void Init(int level)
     {
+
+        Level = level;
         maxHealth = 200 + 80 * (level - 1);
         currentHealth = maxHealth;
     }

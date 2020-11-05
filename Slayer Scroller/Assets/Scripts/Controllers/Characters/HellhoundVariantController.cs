@@ -29,6 +29,9 @@ public class HellhoundVariantController : HellhoundController
 
         BigFireballPrefab = Resources.Load("Prefabs/Projectiles/EliteFireBall") as GameObject;
         SlamSpikesPrefab = Resources.Load("Prefabs/AoE/SlamSpikes") as GameObject;
+
+        EffectXOffset = 2;
+        EffectWidth = 3;
     }
 
 

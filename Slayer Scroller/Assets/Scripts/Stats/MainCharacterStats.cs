@@ -47,11 +47,11 @@ public class MainCharacterStats : UnitStats
         while (true)
         {
             if (currentEnergy < maxEnergy)
-                currentEnergy += 0.2f;
+                currentEnergy += 0.02f;
             if (currentStamina < maxStamina)
-                currentStamina += 1f + 0.5f * (Level - 1);
+                currentStamina += 0.05f + 0.005f * (Level - 1);
             UpdateResourceBar();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 

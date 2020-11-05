@@ -18,6 +18,7 @@ public class MainCharacterUpperAnimationController : CharacterAnimationStateCont
     public UnityEvent onSlashFinish = new UnityEvent();
     public UnityEvent onCullEffect = new UnityEvent();
     public UnityEvent onDefaultSpellUse = new UnityEvent();
+    public UnityEvent onPerforate = new UnityEvent();
 
     #region skill event triggers
     public void DefaultSpellUse()
@@ -85,6 +86,11 @@ public class MainCharacterUpperAnimationController : CharacterAnimationStateCont
     public void WeaponOffBack()
     {
         WeaponDetectionOffBack.Invoke();
+    }
+
+    public void Perforate()
+    {
+        onPerforate.Invoke();
     }
     #endregion
 

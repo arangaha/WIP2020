@@ -39,9 +39,10 @@ public class Stage
     [XmlElement(ElementName = "UpgradeRewards")]
     public int UpgradeRewards = 0; //how many skill upgrade rewards the player get after beating the stage
 
-
-    [XmlElement(ElementName = "UnlockedSkill")]
-    public string UnlockedSkill = ""; //skill to be unlocked after beating the stage. leave at empty for no skill unlock
+    
+    [XmlArray("UnlockedSkills"), XmlArrayItem("UnlockedSkill")]
+    public List<string> UnlockedSkill = null; //skill to be unlocked after beating the stage. leave at empty for no skill unlock
 
 
 }
+
