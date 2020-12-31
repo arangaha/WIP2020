@@ -1,10 +1,11 @@
 Win64
 PlayerPath?
-E:/GAMESTUFF/Builds/Slayer Scroller V1.0/Slayer Scroller.exe
+E:/GAMESTUFF/Builds/V1.1a/Slayer Scroller.exe
 SceneListBegin?
 Assets/Scenes/Title.unity
 Assets/Scenes/Stage One.unity
 SceneListEnd?
+71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.FortifyControl
 3c08375166df118bd1801438fc36b92f Unity.TextMeshPro.dll:TMPro.TMP_SelectionCaret
 77c21079ace8d76ce6e941d3dabbfe6e Unity.TextMeshPro.dll:TMPro.TMP_Dropdown
 71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -20,6 +21,7 @@ e1bbf0ab858085e38fae6b12ebbdcd35 UnityEngine.Timeline.dll:UnityEngine.Timeline.G
 e1bbf0ab858085e38fae6b12ebbdcd35 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 201e3fde670b00545944bb3db215c80a UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 e7a73f5f78ba6445195ec23b74a1ce2d Unity.TextMeshPro.dll:TMPro.TMP_ScrollbarEventHandler
+b3053f8c8fa6e348f6418fb4cbc0b0d1 Assembly-CSharp.dll:.ExposeEffect
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:TMPro.TMP_PhoneNumberValidator
 a861b626b518d954a17f6651587b351a Assembly-CSharp.dll:.EliteWarriorController
 cf9f5cf2c3145a37ac07f00e50e460f9 UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
@@ -93,7 +95,7 @@ abf1930d8126d0b2e00e9449129a0190 UnityEngine.UI.dll:UnityEngine.EventSystems.Tou
 2d8261183f90d04d36bbc18fc538babb Assembly-CSharp.dll:.CharacterAnimationStateController
 d229de452d54b7ad64f6c1d071c4f77c Assembly-CSharp.dll:.UpgradeController
 c24ba30905ac706a72d1827c56e703ca Assembly-CSharp.dll:.WeaponColliderController
-f59f4d451f8966211d085d81b13c3fa2 Assembly-CSharp.dll:.XMLLoad
+6792b7c0365a63f755479e8bf456f0c8 Assembly-CSharp.dll:.XMLLoad
 71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 06f0fef534ca4c1d6064fd77a26bf722 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
 780e8f682b3221346c034a6712a0fd25 UnityEngine.Timeline.dll:UnityEngine.Timeline.AnimationPlayableAsset
@@ -129,13 +131,13 @@ b58f6d4e4b94f62943a0c8f05ed44bd6 Assembly-CSharp.dll:.ParallaxBackground
 d43f18db4859a0c48dd5281cae0ef102 Assembly-CSharp.dll:.PortalController
 c74751b075103224d10eddd9e0026736 Assembly-CSharp.dll:.StageController
 4d16cfbaa8e821a2b370e80844a0e9bc Assembly-CSharp.dll:TMPro.Examples.Benchmark03
-f563aa573cb25318b408259931b37149 Assembly-CSharp.dll:.MainCharacterUpperAnimationController
-2acbada5a3897d075cfbb0f5a96a9c80 Assembly-CSharp.dll:.StageComplete
+7284123fa9818969d2876aab6051b4cd Assembly-CSharp.dll:.MainCharacterUpperAnimationController
+7c32c795f25bc7ffa73d061565c3a16a Assembly-CSharp.dll:.StageComplete
 303ad70ce203ad874efe2965d0fbcff9 Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsEventTracker
 7fb9de8dcf73854b6b328eca1f7a6e6d Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsTracker
 e6f0efd0e20669d577e9d21526b3d3f9 Assembly-CSharp.dll:TMPro.Examples.WarpTextExample
 79cc448d5a08bbefad50ee8e3fd6b99c Assembly-CSharp.dll:.MainCharacterLowerAnimationController
-bbba4ba41099f11d980b9d88a580dd41 Assembly-CSharp.dll:.MainCharacterController
+6cdce35081b687337258c556229c143b Assembly-CSharp.dll:.MainCharacterController
 dd7520b7d4e690e8c593273e7b9fbe80 Assembly-CSharp.dll:TMPro.Examples.TMP_TextEventCheck
 b8a5e8091ab0b8861d2add371082c5e0 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
 08ee418b801850b56a351565b9c8bb78 Assembly-CSharp.dll:TMPro.TMP_TextEventHandler
@@ -209,6 +211,7 @@ fbbf64dcbe0662e3eda1dec45ea8f895 Vuforia.UnityExtensions.dll:Vuforia.WireframeBe
 71bb6a6b6c8f052f948db64c7dd3ca4f Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
 143da9b1bed03b494820d199b14aa40e Assembly-CSharp.dll:.RainOfBladesControl
 b3ab2106268377ffe25dd18ac23dca28 Unity.TextMeshPro.dll:TMPro.TMP_Asset
+c0d390cc65c51fa3f59a9ba147727deb Assembly-CSharp.dll:.SpikeTrapControl
 8cb0c6c4966ea7936a55cdd9d956f060 Assembly-CSharp.dll:.GroundColliderController
 8b52260dac9ca116260dcbcb0c9f9d64 Assembly-CSharp.dll:.HellbatController
 3375c3d749f8f4cad889721b431bdc27 Assembly-CSharp.dll:TMPro.Examples.CameraController
@@ -217,13 +220,14 @@ e63944317d2f5958e31963668bb29158 Assembly-CSharp.dll:TMPro.Examples.VertexJitter
 09ce9ba8a2837d55b11f7bee9351efd6 Assembly-CSharp.dll:.EliteWarriorBarrier
 71bb6a6b6c8f052f948db64c7dd3ca4f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.SlamSpikesControl
-81483f0e8e795b3c93c9b5fbde654f1e Assembly-CSharp.dll:.EliteWarriorStats
-a719d16fcfd8324a41c4d89ea815e91f Assembly-CSharp.dll:.MainCharacterStats
+d7414c13f4756ab8a750a55156d6641b Assembly-CSharp.dll:.EliteWarriorStats
+a996b31a81c0cbf93068dc1e49cc110f Assembly-CSharp.dll:.MainCharacterStats
 f6c2ec1442e21a2498363d08d0aea814 Assembly-CSharp.dll:.ChakramControl
-cf33285a1c00efdd87bf13ffd460e85a Assembly-CSharp.dll:.WarriorStats
-6b986f8bbf17f89f1273d8ec0210d9ac Assembly-CSharp.dll:.HellHoundEliteStats
+c2c70f26a0d8652f3a4a5a2efae6297c Assembly-CSharp.dll:.WarriorStats
+55f3f1650135cca02b2fdc13be36c4f0 Assembly-CSharp.dll:.HellHoundEliteStats
 4fd8bf02e3089425d3502e26c44ba31a Unity.TextMeshPro.dll:TMPro.TextContainer
 3cae62e09a50c5d5aae8d0536b3d8fde Assembly-CSharp.dll:.ChatController
+ef623603d7a679a7d184e99e682e5683 Assembly-CSharp.dll:.PerforateControl
 32b7f5630a4e6f63208d7a725fea1d9d Assembly-CSharp.dll:.SlotOption
 ef623603d7a679a7d184e99e682e5683 Assembly-CSharp.dll:.MegaBeamControl
 e244702e0dc05782229aa524e4d757f5 Assembly-CSharp.dll:TMPro.Examples.TMP_ExampleScript_01
@@ -251,7 +255,7 @@ e1300922cc039f41ab46a47f4cb05898 Unity.TextMeshPro.dll:TMPro.TMP_Settings
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:TMPro.Examples.TextConsoleSimulator
 62fef86270a167c41a606cfca1ecc156 Assembly-CSharp.dll:TMPro.Examples.ShaderPropAnimator
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:TMPro.Examples.TMP_TextSelector_A
-cf33285a1c00efdd87bf13ffd460e85a Assembly-CSharp.dll:.HellbatStats
+c2c70f26a0d8652f3a4a5a2efae6297c Assembly-CSharp.dll:.HellbatStats
 88cc9df3c6fc697bfbeacd24c0d6f2d7 UnityEngine.TestRunner.dll:UnityEngine.TestTools.BeforeAfterTestCommandState
 88cc9df3c6fc697bfbeacd24c0d6f2d7 UnityEngine.TestRunner.dll:UnityEngine.TestTools.EnumerableSetUpTearDownCommandState
 71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.PlayModeRunnerCallback
@@ -278,12 +282,12 @@ a1ca1237bad0f30ea5ba8f4060929114 Assembly-CSharp.dll:TMPro.Examples.TMP_TextSele
 507174d46dacbc5fe45e28485db5dd1e Unity.Analytics.DataPrivacy.dll:UnityEngine.Analytics.DataPrivacyButton
 3665a6a2fb2debb942b7f2a2dcc41d3a Assembly-CSharp.dll:.TitleScreenControler
 27e5341178f188b89bdc6495710b590c Assembly-CSharp.dll:TMPro.Examples.Benchmark01_UGUI
-cf33285a1c00efdd87bf13ffd460e85a Assembly-CSharp.dll:.HellHoundStats
+c2c70f26a0d8652f3a4a5a2efae6297c Assembly-CSharp.dll:.HellHoundStats
 ee98729079998eb63435f99f41b30b9e Assembly-CSharp.dll:.DamageText
 8a874a8207a7664bdf44e61f28717254 Assembly-CSharp.dll:TMPro.Examples.SkewTextExample
 d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 fe2d355deb0ca31d59a0a7cf4d141fc3 Assembly-CSharp.dll:TMPro.Examples.Benchmark04
-cf33285a1c00efdd87bf13ffd460e85a Assembly-CSharp.dll:.PortalStats
+c2c70f26a0d8652f3a4a5a2efae6297c Assembly-CSharp.dll:.PortalStats
 ee4efd40f0472674bcbd6f9392456dc1 Assembly-CSharp.dll:.WarriorController
 4d16cfbaa8e821a2b370e80844a0e9bc Assembly-CSharp.dll:TMPro.Examples.TextMeshSpawner
 ef623603d7a679a7d184e99e682e5683 Assembly-CSharp.dll:.BladeStormBladeControl

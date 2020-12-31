@@ -16,10 +16,17 @@ public abstract class UnitStats : MonoBehaviour
     [SerializeField] protected float protection = 1; //multiplier for the next hit received
 
     #region Debuffs
+    /// <summary>
+    /// Bleed: deals damage per second. 4 second duration, adding more bleed refreshes the duration and adds the amount to the existing amount.
+    /// </summary>
     [SerializeField] protected int BleedAmount= 0;
     [SerializeField] protected int BleedCounter = 4; //countdown for bleed
     [SerializeField] protected float extraBleedMulti = 0;
     [SerializeField] protected float extraBleedCounter = 8;
+    /// <summary>
+    /// Burn: deals damage per second. -1 damage per second. lasts until damage is 0. adding more burn increases the current amount by added amount.
+    /// </summary>
+    [SerializeField] protected int BurnAmount = 0;
     [SerializeField] protected int slowCounter = 0; //countdown for slow
     #endregion
 
@@ -56,6 +63,11 @@ public abstract class UnitStats : MonoBehaviour
                 BleedCounter -= 1;
                 if (BleedCounter <= 0)
                     BleedAmount = 0;
+            }
+            if(BurnAmount>0)
+            {
+                TakeBurnDamage(BurnAmount);
+                BurnAmount--;
             }
             if(slowCounter>0)
             {
@@ -133,7 +145,21 @@ public abstract class UnitStats : MonoBehaviour
             extraBleedMulti = 0;
 
         UpdateHealth();
-        uicontroller.CreateDamageText(totalAmount, transform.position, true);
+        uicontroller.CreateDamageText(totalAmount, transform.position, true, false);
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            Die();
+        }
+    }
+
+    public virtual void TakeBurnDamage(float amount)
+    {
+        float totalAmount = amount;
+
+        currentHealth -= totalAmount;
+        UpdateHealth();
+        uicontroller.CreateDamageText(totalAmount, transform.position, false, true);
         if (currentHealth <= 0)
         {
             currentHealth = 0;
@@ -261,6 +287,20 @@ public abstract class UnitStats : MonoBehaviour
     {
         extraBleedMulti = multi;
         extraBleedCounter = 8;
+    }
+    #endregion 
+
+    #region burn related
+    public void BurnTarget(GameObject g, int amount)
+    {
+        UnitStats u = g.GetComponent<UnitStats>();
+        u.Burn(amount);
+    }
+
+    public void Burn(int amount)
+    {
+        BurnAmount += amount; 
+
     }
     #endregion
 

@@ -36,6 +36,9 @@ public class Stage
     [XmlElement(ElementName = "Bats")]
     public int Bats = 0; //bats spawned in this stage
 
+    [XmlElement(ElementName = "Demons")]
+    public int Demons = 0; //demons spawned in this stage
+
     [XmlElement(ElementName = "UpgradeRewards")]
     public int UpgradeRewards = 0; //how many skill upgrade rewards the player get after beating the stage
 

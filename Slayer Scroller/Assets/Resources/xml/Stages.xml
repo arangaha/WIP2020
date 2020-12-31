@@ -98,4 +98,28 @@
 		<UpgradeRewards>5</UpgradeRewards>
 		
 	</Stage>
+		<Stage>
+		<StageNumber>11</StageNumber>
+		<StageArea>1</StageArea>
+		<Demons>1</Demons>
+		<UpgradeRewards>4</UpgradeRewards>
+		
+	</Stage>
+		</Stage>
+		<Stage>
+		<StageNumber>12</StageNumber>
+		<StageArea>1</StageArea>
+		<EliteHounds>2</EliteHounds>
+		<UpgradeRewards>4</UpgradeRewards>
+		
+	</Stage>
+			</Stage>
+		<Stage>
+		<StageNumber>13</StageNumber>
+		<StageArea>1</StageArea>
+				<Demons>1</Demons>
+		<Hounds>4</Hounds>
+		<UpgradeRewards>4</UpgradeRewards>
+		
+	</Stage>
 </Stages>

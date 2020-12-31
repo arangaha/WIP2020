@@ -117,6 +117,12 @@ public sealed class Skill
     public static Skill HellbatGouge = new Skill("Hellbat Gouge", Icon.Default, 3, 8, 10, false, 0, 1, 0, 0);
     public static Skill HellbatSonicWave = new Skill("Hellbat Sonic Wave", Icon.Default, 4, 12, 8, false, 0, 0, 0, 0, 8, false);
 
+    public static Skill DemonNA = new Skill("Demon Normal Attack", Icon.Default, 15, 15, 0, false, 0, 2, 0, 0); //claw attack in animations. NA is actually Punch attack
+    public static Skill DemonPunch = new Skill("Demon Punch Attack", Icon.Default, 30, 20, 0, false, 0, 0, 0, 0);
+    public static Skill DemonFlameBreath = new Skill("Demon Flame Breath", Icon.Default, 8, 18, 0, false, 0, 0, 0, 0);
+    public static Skill DemonGroundBurst = new Skill("Demon Ground Burst", Icon.Default, 25, 20, 0, false, 0, 0, 0, 0);
+    public static Skill DemonTrample = new Skill("Demon Trample", Icon.Default, 35, 8, 0, false, 0, 0, 0, 0);
+
 }
 
 public sealed class PlayerSkill

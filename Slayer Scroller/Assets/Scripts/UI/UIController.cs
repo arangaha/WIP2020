@@ -32,19 +32,19 @@ public class UIController : MonoBehaviour
             GameObject instance = Instantiate(damageTextPrefab,transform);
             instance.transform.position = position;
             instance.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-            instance.GetComponent<DamageText>().InitializeText(amount,false);
+            instance.GetComponent<DamageText>().InitializeText(amount,false,false);
         }
     }
 
 
-    public void CreateDamageText(float amount, Vector3 position, bool Bleed)
+    public void CreateDamageText(float amount, Vector3 position, bool Bleed, bool Burn)
     {
         if (amount != 0)
         {
             GameObject instance = Instantiate(damageTextPrefab, transform);
             instance.transform.position = position;
             instance.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-            instance.GetComponent<DamageText>().InitializeText(amount,true);
+            instance.GetComponent<DamageText>().InitializeText(amount,Bleed,Burn);
         }
     }
 

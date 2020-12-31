@@ -150,7 +150,7 @@ public class EliteWarriorController : EnemyController
     }
 
     void StopCharging()
-    {
+    { 
         ChargingForward = false;
         rigidbody.velocity = new Vector2(0, 0);
     }

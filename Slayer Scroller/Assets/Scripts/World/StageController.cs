@@ -22,6 +22,7 @@ public class StageController : MonoBehaviour
     GameObject HellHoundElite;
     GameObject Hellbat;
     GameObject EliteWarrior;
+    GameObject Demon;
     
     GameObject StageCompletePrefab;
     GameObject StageCompleteInstance;
@@ -50,6 +51,7 @@ public class StageController : MonoBehaviour
         HellHoundElite = Resources.Load("Prefabs/Characters/HellHoundVariant") as GameObject;
         Hellbat = Resources.Load("Prefabs/Characters/Hellbat") as GameObject;
         EliteWarrior = Resources.Load("Prefabs/Characters/EliteWarrior") as GameObject;
+        Demon = Resources.Load("Prefabs/Characters/Demon") as GameObject;
 
         PlayerPrefab = Resources.Load("Prefabs/Characters/MainCharacter") as GameObject;
         UpgradeScreenPrefab = Resources.Load("Prefabs/UI/Overlays/UpgradeOverlay") as GameObject;
@@ -102,7 +104,7 @@ public class StageController : MonoBehaviour
             }
             else
             {
-                int tempSpawningNum = stageNumber % 4;
+                int tempSpawningNum = stageNumber % 5;
                 switch (tempSpawningNum)
                 {
                     case 0:
@@ -116,6 +118,9 @@ public class StageController : MonoBehaviour
                         break;
                     case 3:
                         currentStage.EliteHounds = stageNumber / 10 + 1;
+                        break;
+                    case 4:
+                        currentStage.Demons = StageNumber / 10 + 1;
                         break;
                 }
             }
@@ -146,7 +151,10 @@ public class StageController : MonoBehaviour
         {
             SpawnEliteWarrior();
         }
-
+        for (int i = 0; i < currentStage.Demons; i++)
+        {
+            SpawnDemon();
+        }
         UpdateEnemies();
         stagetext.GetComponent<Animator>().Play("Anim");
         initialized = true;
@@ -246,7 +254,10 @@ public class StageController : MonoBehaviour
         UpdateEnemies();
     }
 
-
+    public void SpawnDemon()
+    {
+        SpawnEnemy(Demon);
+    }
 
     /// <summary>
     /// coroutine that gets ran when a stage is complete

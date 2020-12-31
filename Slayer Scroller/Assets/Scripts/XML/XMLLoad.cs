@@ -10,7 +10,7 @@ public class XMLLoad : Singleton<XMLLoad>
     public bool initialized = false;
     public void LoadStages()
     {
-    //   TextAsset StagesXML = (TextAsset)Resources.Load("xml/test") ; // test stage
+       //TextAsset StagesXML = (TextAsset)Resources.Load("xml/test") ; // test stage
        TextAsset StagesXML = (TextAsset)Resources.Load("xml/Stages");
 
         // TextReader StagesXML = (TextReader)Resources.Load("xml/Stages.xml");

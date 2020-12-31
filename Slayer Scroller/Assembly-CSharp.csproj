@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Controllers\Characters\CharacterAnimationStateController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Characters\DemonController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Characters\EliteWarriorController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Characters\EnemyController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Characters\GroundColliderController.cs" />
@@ -78,6 +79,8 @@
     <Compile Include="Assets\Scripts\Controllers\Effects\BladeStormControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\ChakramControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\CullEffectControl.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\DemonFlameBreath.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Effects\DemonFlameBreathFire.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorBarrier.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorSpikesControl.cs" />
     <Compile Include="Assets\Scripts\Controllers\Effects\EliteWarriorStormCallControl.cs" />
@@ -94,6 +97,7 @@
     <Compile Include="Assets\Scripts\Progress\GlobalVariables.cs" />
     <Compile Include="Assets\Scripts\Progress\ProgressSave.cs" />
     <Compile Include="Assets\Scripts\PublicEnums.cs" />
+    <Compile Include="Assets\Scripts\Stats\DemonStats.cs" />
     <Compile Include="Assets\Scripts\Stats\EliteWarriorStats.cs" />
     <Compile Include="Assets\Scripts\Stats\HellbatStats.cs" />
     <Compile Include="Assets\Scripts\Stats\HellHoundEliteStats.cs" />

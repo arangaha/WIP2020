@@ -16,7 +16,7 @@ public class EliteWarriorStats : UnitStats
 
     public override void TakeDamage(float amount)
     {
-        if(!invulnerable)
+        if (!invulnerable)
             base.TakeDamage(amount);
     }
 

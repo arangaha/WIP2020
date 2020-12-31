@@ -18,7 +18,7 @@ public class DamageText : MonoBehaviour
     /// initialize the text
     /// </summary>
     /// <param name="number">positive if taking damage, negative if healing</param>
-    public void InitializeText(float number, bool bleed)
+    public void InitializeText(float number, bool bleed,bool burn)
     {
         if (number != 0)
         {
@@ -27,6 +27,13 @@ public class DamageText : MonoBehaviour
             if(bleed)
             {
                 text.color = Color.red;
+                text.text = "" + (int)number;
+                text.fontSize = 18;
+            }
+            else if(burn)
+            {
+
+                text.color = Color.yellow;
                 text.text = "" + (int)number;
                 text.fontSize = 18;
             }
